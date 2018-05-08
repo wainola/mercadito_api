@@ -1,5 +1,5 @@
 {
-  "name": "Lobulo Media Project",
+  "name": "LobuloMedia",
   "version": "1.0.0",
   "description": "A simple description of project",
   "main": "server.js",
@@ -61,6 +61,7 @@
     "eslint": "^2.3.0",
     "eslint-config-airbnb": "^6.1.0",
     "eslint-plugin-react": "^4.2.1",
+    "express": "^4.16.3",
     "npm": "^5.8.0",
     "rimraf": "^2.5.2"
   },
@@ -74,4 +75,3 @@
     "node": "8.1.1"
   }
 }
-
