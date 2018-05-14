@@ -6,7 +6,9 @@
   "scripts": {
     "test": "./node_modules/.bin/mocha test",
     "clean": "rimraf build",
-    "build": "better-npm-run build",
+    "build": "babel src -d dist --presets es2015,stage-2",
+    "serve": "node dist/server.js",
+    "serve-build": "babel src -d dist --presets es2015,stage-2 && node dist/server.js",
     "lint": "eslint src/",
     "deploy": "npm run build",
     "start": "nf start",
