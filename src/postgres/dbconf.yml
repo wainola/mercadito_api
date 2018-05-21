@@ -1,0 +1,10 @@
+development:
+  driver: postgres
+  dsn: postgres://localhost/mercadito_api?sslmode=disable
+
+test:
+  driver: postgres
+  dsn: postgres://localhost/mercadito_api_test?sslmode=disable
+production:
+  driver: postgres
+  dsn: $DATABASE_URL
