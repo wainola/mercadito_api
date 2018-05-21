@@ -1,7 +1,7 @@
 {
-  "name": "LobuloMedia",
+  "name": "MercaditoApi",
   "version": "1.0.0",
-  "description": "A simple description of project",
+  "description": "Api for Mercadito de Larmahue",
   "main": "server.js",
   "scripts": {
     "test": "./node_modules/.bin/mocha test",
@@ -60,12 +60,17 @@
     "babel-preset-stage-0": "^6.5.0",
     "babel-runtime": "^6.6.1",
     "better-npm-run": "0.0.8",
+    "body-parser": "^1.18.3",
+    "cors": "^2.8.4",
+    "dotenv": "^5.0.1",
     "eslint": "^2.3.0",
     "eslint-config-airbnb": "^6.1.0",
     "eslint-plugin-react": "^4.2.1",
     "express": "^4.16.3",
+    "morgan": "^1.9.0",
     "npm": "^5.8.0",
-    "rimraf": "^2.5.2"
+    "rimraf": "^2.5.2",
+    "signale": "^1.1.0"
   },
   "devDependencies": {
     "chai": "^3.5.0",
