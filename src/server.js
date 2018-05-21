@@ -28,6 +28,7 @@ server.use(DB.attach(pool));
 
 server.get('/api/test', TestHandler.testEndpoint);
 server.post('/api/users', UserHandler.create);
+server.post('/api/login', UserHandler.login);
 
 server.listen(port);
 signale.watch(`Server listen on port ${port}`);
