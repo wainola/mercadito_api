@@ -8,7 +8,7 @@ import signale from 'signale'
 // MIDDLEWARES
 
 // HANDLERS
-import * as TestHandler from './handlers/TestHandler'
+import * as TestHandler from './handlers/testHandler'
 
 dotenv.config({silent: process.env.NODE_ENV !== 'development'});
 
