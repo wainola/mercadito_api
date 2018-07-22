@@ -1,11 +1,15 @@
-import bcrypt from 'bcrypt'
-import jwt from 'jsonwebtoken'
-import moment from 'moment'
+// import bcrypt from 'bcrypt'
+// import jwt from 'jsonwebtoken'
+// import moment from 'moment'
+
+const bcrypt = require('bcrypt')
+const jwt = require('jsonwebtoken')
+const moment = require('moment')
 
 const SALT_ROUNDS = 10;
 let res;
 
-export const create = (request, response) => {
+exports.create = (request, response) => {
   const { user: { email, name, password } } = request.body;
   const query = 'INSERT INTO users (email, name, hashed_password) VALUES ($1,$2,$3) RETURNING *';
 
@@ -38,7 +42,7 @@ export const create = (request, response) => {
   })
 }
 
-export const login = (request, response) => {
+exports.login = (request, response) => {
   const { credentials: { email, password } } = request.body;
   const dataQuery = [email];
   const query = 'SELECT * FROM users WHERE email = $1';

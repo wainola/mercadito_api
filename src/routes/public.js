@@ -1,4 +1,5 @@
-import UserHandler from '../handlers/userHandler'
+// import UserHandler from '../handlers/userHandler'
+const UserHandler = require('../handlers/userHandler')
 
 const publicRoutes = [
   {

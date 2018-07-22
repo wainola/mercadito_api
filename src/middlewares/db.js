@@ -7,4 +7,5 @@ class DB{
   }
 }
 
-export default DB;
+// export default DB;
+module.exports = DB

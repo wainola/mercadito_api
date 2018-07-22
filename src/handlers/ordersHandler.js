@@ -1,7 +1,10 @@
-import Joi from 'joi'
-import { credentialsSchema } from '../validators/index'
+// import Joi from 'joi'
+// import { credentialsSchema } from '../validators/index'
+const Joi = require('joi')
+const credentialsSchema = require('../validators/index').credentialsSchema
 
-export const postOrder = (request, response, next) => {
+exports.postOrder = (request, response, next) => {
+  let reply
   const isValidJSON = Joi.validate(request.body, credentialsSchema)
   if(isValidJSON !== null){
     reply: {
