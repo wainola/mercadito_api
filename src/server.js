@@ -1,10 +1,3 @@
-// import express from 'express';
-// import bodyParser from 'body-parser';
-// import dotenv from 'dotenv';
-// import morgan from 'morgan';
-// import cors from 'cors';
-// import signale from 'signale'
-// import { Pool, Client } from 'pg'
 const express = require('express')
 const bodyParser = require('body-parser')
 const dotenv = require('dotenv')
@@ -15,13 +8,10 @@ const Pool = require('pg').Pool
 const Client = require('pg').Client
 
 // MIDDLEWARES
-// import DB from './middlewares/db'
 const DB = require('./middlewares/db')
 
 // HANDLERS
-// import * as TestHandler from './handlers/testHandler'
 const TestHandler = require('./handlers/testHandler')
-// import * as UserHandler from './handlers/userHandler'
 const UserHandler = require('./handlers/userHandler')
 
 dotenv.config({silent: process.env.NODE_ENV !== 'development'});

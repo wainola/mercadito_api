@@ -1,5 +1,3 @@
-// import Joi from 'joi'
-// import { credentialsSchema } from '../validators/index'
 const Joi = require('joi')
 const credentialsSchema = require('../validators/index').credentialsSchema
 

@@ -1,7 +1,3 @@
-// import bcrypt from 'bcrypt'
-// import jwt from 'jsonwebtoken'
-// import moment from 'moment'
-
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 const moment = require('moment')
