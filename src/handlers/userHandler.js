@@ -1,6 +1,7 @@
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 const moment = require('moment')
+const DB = require('../db')
 
 const SALT_ROUNDS = 10;
 let res;
@@ -93,5 +94,16 @@ exports.login = (request, response) => {
 
       return response.status(201).json(res);
     })
+  })
+}
+
+exports.get = (request, response) => {
+  let client = new DB()
+  // console.log('this.client', client)
+  client.query('SELECT * FROM users', (err, result) => {
+    if(err){
+      return response.status(500).send(err)
+    }
+    return response.status(200).send(result)
   })
 }

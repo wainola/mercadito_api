@@ -28,6 +28,7 @@ server.use(bodyParser.urlencoded({extended: true}));
 server.use(DB.attach(pool));
 
 server.get('/api/test', TestHandler.testEndpoint);
+server.get('/api/users', UserHandler.get)
 server.post('/api/users', UserHandler.create);
 server.post('/api/login', UserHandler.login);
 

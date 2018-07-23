@@ -1,5 +1,5 @@
 const Joi = require('joi')
-const credentialsSchema = require('../validators/index').credentialsSchema
+const { credentialsSchema } = require('../validators/index')
 
 exports.postOrder = (request, response, next) => {
   let reply
