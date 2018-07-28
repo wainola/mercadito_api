@@ -1,5 +1,5 @@
-class DB{
-  static attach(pool){
+class DB {
+  static attach(pool) {
     return (req, res, next) => {
       req.pool = pool;
       next();
@@ -7,4 +7,4 @@ class DB{
   }
 }
 
-module.exports = DB
+module.exports = DB;

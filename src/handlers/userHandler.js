@@ -1,25 +1,32 @@
-const bcrypt = require('bcrypt')
-const jwt = require('jsonwebtoken')
-const moment = require('moment')
-const DB = require('../db')
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
+const moment = require('moment');
+const DB = require('../db');
 
 const SALT_ROUNDS = 10;
 let res;
 
 exports.create = (request, response) => {
-  const { user: { email, name, password } } = request.body;
+  const {
+    user: {
+      email,
+      name,
+      password
+    }
+  } = request.body;
   const query = 'INSERT INTO users (email, name, hashed_password) VALUES ($1,$2,$3) RETURNING *';
 
   bcrypt.hash(password, SALT_ROUNDS, (err, hashedPassword) => {
     const values = [email, name, hashedPassword];
     request.pool.query(query, values, (err, result) => {
-      if(err){
+      if (err) {
         res = {
-          error:{
+          error: {
             message: 'Internal server error',
             status_code: 500
           }
         };
+        º
         return response.status(500).json(res)
       }
       const user = result.rows[0];
@@ -40,12 +47,17 @@ exports.create = (request, response) => {
 }
 
 exports.login = (request, response) => {
-  const { credentials: { email, password } } = request.body;
+  const {
+    credentials: {
+      email,
+      password
+    }
+  } = request.body;
   const dataQuery = [email];
   const query = 'SELECT * FROM users WHERE email = $1';
 
   request.pool.query(query, dataQuery, (err, result) => {
-    if(err){
+    if (err) {
       res = {
         error: {
           message: 'Internal server error',
@@ -55,7 +67,7 @@ exports.login = (request, response) => {
       return response.status(500).json(res);
     }
 
-    if(result.rowCount === 0){
+    if (result.rowCount === 0) {
       res = {
         error: {
           message: 'Unauthorize. No credentials found',
@@ -67,9 +79,9 @@ exports.login = (request, response) => {
 
     const user = result.rows[0];
     bcrypt.compare(password, user.hashed_password, (err, isMatch) => {
-      if(!isMatch){
+      if (!isMatch) {
         res = {
-          error:{
+          error: {
             message: 'Unprocessable entity'
           }
         };
@@ -101,7 +113,7 @@ exports.get = (request, response) => {
   let client = new DB()
   // console.log('this.client', client)
   client.query('SELECT * FROM users', (err, result) => {
-    if(err){
+    if (err) {
       return response.status(500).send(err)
     }
     return response.status(200).send(result)

@@ -52,7 +52,6 @@
   "dependencies": {
     "babel-cli": "^6.6.5",
     "babel-core": "^6.6.5",
-    "babel-eslint": "^6.0.0-beta.2",
     "babel-plugin-syntax-trailing-function-commas": "^6.5.0",
     "babel-plugin-transform-object-rest-spread": "^6.6.5",
     "babel-polyfill": "^6.7.2",
@@ -64,8 +63,7 @@
     "body-parser": "^1.18.3",
     "cors": "^2.8.4",
     "dotenv": "^5.0.1",
-    "eslint": "^2.3.0",
-    "eslint-config-airbnb": "^6.1.0",
+    "eslint-config-airbnb": "^6.2.0",
     "eslint-plugin-react": "^4.2.1",
     "express": "^4.16.3",
     "joi": "^13.4.0",
@@ -81,6 +79,9 @@
   },
   "devDependencies": {
     "chai": "^3.5.0",
+    "eslint": "^4.19.1",
+    "eslint-config-airbnb-base": "^13.0.0",
+    "eslint-plugin-import": "^2.13.0",
     "mocha": "^2.4.5",
     "nodemon": "^1.9.1",
     "supertest": "^1.1.0"
