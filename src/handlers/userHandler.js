@@ -11,8 +11,8 @@ exports.create = (request, response) => {
     user: {
       email,
       name,
-      password
-    }
+      password,
+    },
   } = request.body;
   const query = 'INSERT INTO users (email, name, hashed_password) VALUES ($1,$2,$3) RETURNING *';
 
@@ -107,15 +107,15 @@ exports.login = (request, response) => {
       return response.status(201).json(res);
     })
   })
-}
+};
 
 exports.get = (request, response) => {
-  let client = new DB()
+  const client = new DB();
   // console.log('this.client', client)
   client.query('SELECT * FROM users', (err, result) => {
     if (err) {
-      return response.status(500).send(err)
+      return response.status(500).send(err);
     }
-    return response.status(200).send(result)
-  })
-}
+    return response.status(200).send(result);
+  });
+};

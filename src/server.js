@@ -1,22 +1,22 @@
-const express = require('express')
-const bodyParser = require('body-parser')
-const dotenv = require('dotenv')
-const morgan = require('morgan')
-const cors = require('cors')
-const signale = require('signale')
+const express = require('express');
+const bodyParser = require('body-parser');
+const dotenv = require('dotenv');
+const morgan = require('morgan');
+const cors = require('cors');
+const signale = require('signale');
 const {
   Pool
-} = require('pg')
+} = require('pg');
 const {
   Client
-} = require('pg')
+} = require('pg');
 
 // MIDDLEWARES
-const DB = require('./middlewares/db')
+const DB = require('./middlewares/db');
 
 // HANDLERS
-const TestHandler = require('./handlers/testHandler')
-const UserHandler = require('./handlers/userHandler')
+const TestHandler = require('./handlers/testHandler');
+const UserHandler = require('./handlers/userHandler');
 
 dotenv.config({
   silent: process.env.NODE_ENV !== 'development'
@@ -24,7 +24,7 @@ dotenv.config({
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL
-})
+});
 
 const port = process.env.PORT;
 const server = express();
@@ -38,7 +38,7 @@ server.use(bodyParser.urlencoded({
 server.use(DB.attach(pool));
 
 server.get('/api/test', TestHandler.testEndpoint);
-server.get('/api/users', UserHandler.get)
+server.get('/api/users', UserHandler.get);
 server.post('/api/users', UserHandler.create);
 server.post('/api/login', UserHandler.login);
 
