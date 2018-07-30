@@ -1,3 +1,8 @@
 {
-    "extends": "airbnb-base"
+    "extends": "standard",
+    "rules":{
+      "no-labels": "off",
+      "no-label-var": "off",
+      "semi": "off"
+    }
 }

@@ -1,18 +1,21 @@
-const Joi = require('joi')
+const Joi = require('joi');
 const { credentialsSchema } = require('../validators/index');
 
-exports.postOrder = (request, response, next) => {
-  let reply
-  const isValidJSON = Joi.validate(request.body, credentialsSchema)
-  if(isValidJSON !== null){
+exports.postOrder = (request, response) => {
+  let reply;
+  const isValidJSON = Joi.validate(request.body, credentialsSchema);
+  if (isValidJSON !== null) {
     reply: {
-      error:{
+      error: {
         message: 'Malformed json'
       }
-    }
-    return response.status(422).send(reply)
+    };
+
+    return response.status(422).send(reply);
   }
 
-  const { order } = request.body
-  const insertIntoOrders = ''
+  const { order } = request.body;
+  const insertIntoOrders = '';
+
+  return response.status(201).send(reply);
 }
