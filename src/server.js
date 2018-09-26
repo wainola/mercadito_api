@@ -3,16 +3,7 @@ const bodyParser = require('body-parser');
 const dotenv = require('dotenv');
 const morgan = require('morgan');
 const cors = require('cors');
-const signale = require('signale');
-const {
-  Pool
-} = require('pg');
-const {
-  Client
-} = require('pg');
-
-// MIDDLEWARES
-const DB = require('./middlewares/db');
+const { Pool } = require('pg')
 
 // HANDLERS
 const TestHandler = require('./handlers/testHandler');
