@@ -1,11 +1,11 @@
 FROM node:8.12.0-alpine
-RUN mkdir -p /app
-WORKDIR /app
-
-RUN npm install -g nodemon
-COPY package.json /app/package.json
+WORKDIR /src
+RUN mkdir server
+COPY ./package.json /src/package.json
+COPY ./package-lock.json /src/package-lock.json
+COPY . /src
 RUN npm install --silent
+RUN npm install -g nodemon
 
-COPY . /app
 EXPOSE 9000
-CMD ['node', 'server.js']
+CMD npm run dev

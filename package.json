@@ -8,7 +8,7 @@
     "clean": "rimraf build",
     "build": "babel src -d dist --presets es2015,stage-2",
     "deploy": "npm run build",
-    "dev": "nodemon ./src/"
+    "dev": "nodemon ./src/server.js"
   },
   "repository": {
     "type": "git",

@@ -1,12 +1,11 @@
-version: "3.3"
+version: "2.1"
 services:
   app:
-    build: ./app
-    command: nodemon server.js
-    volumes:
-      - ./app:/app
+    container_name: server
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: "npm run dev"
     ports:
       - "9000:9000"
-  db:
-    image: postgres:9.4-alpine
-    container_name: db
+    
