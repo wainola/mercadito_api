@@ -8,4 +8,5 @@ services:
     command: "npm run dev"
     ports:
       - "9000:9000"
-    
+    volumes:
+      - ./:/server
