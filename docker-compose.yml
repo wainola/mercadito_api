@@ -10,3 +10,14 @@ services:
       - "9000:9000"
     volumes:
       - ./:/server
+    environment:
+      - DATABASE_URL=postgres://postgres:password@localhost:5432/mercadito_api
+  db:
+    image: postgres
+    container_name: db
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=mercadito_api
+    ports:
+      - "5432:5432"

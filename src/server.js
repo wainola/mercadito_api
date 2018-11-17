@@ -5,13 +5,11 @@ const morgan = require("morgan");
 const cors = require("cors");
 const { Pool } = require("pg");
 
-console.log("NODEMON START!!");
-
-console.log("mapeando la wea");
-
 // HANDLERS
 const TestHandler = require("./handlers/testHandler");
 const UserHandler = require("./handlers/userHandler");
+
+console.log(process.env.DATABASE_URL);
 
 dotenv.config({
   silent: process.env.NODE_ENV !== "development"
@@ -19,6 +17,11 @@ dotenv.config({
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL
+});
+
+pool.query("select now()", (err, res) => {
+  if (err) console.error("some error", err);
+  console.log(res.rows);
 });
 
 const port = process.env.PORT;
