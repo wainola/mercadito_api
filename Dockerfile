@@ -8,6 +8,5 @@ RUN npm install -g nodemon
 RUN npm install -g knex
 
 COPY . .
-RUN mkdir -p /usr/server/src/migrations
 EXPOSE 9000
 # CMD ["npm", "run", "dev"]
