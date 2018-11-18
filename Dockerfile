@@ -1,11 +1,13 @@
 FROM node:8.12.0
-WORKDIR /server
+RUN mkdir -p /usr/server
+WORKDIR /usr/server
 COPY package*.json ./
 # COPY ./package-lock.json server/package-lock.json
 RUN npm install --silent
 RUN npm install -g nodemon
+RUN npm install -g knex
 
 COPY . .
-
+RUN mkdir -p /usr/server/src/migrations
 EXPOSE 9000
-CMD ["npm", "run", "dev"]
+# CMD ["npm", "run", "dev"]
