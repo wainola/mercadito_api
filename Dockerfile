@@ -9,4 +9,4 @@ RUN npm install -g knex
 
 COPY . .
 EXPOSE 9000
-# CMD ["npm", "run", "dev"]
+CMD ["npm", "run", "dev"]
