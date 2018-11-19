@@ -44,10 +44,8 @@
     "signale": "^1.1.0"
   },
   "devDependencies": {
-    "chai": "^4.1.2",
-    "mocha": "^5.2.0",
-    "nodemon": "^1.9.1",
-    "supertest": "^3.1.0"
+    "jest": "^23.6.0",
+    "nodemon": "^1.9.1"
   },
   "engines": {
     "node": "10.13.0"
