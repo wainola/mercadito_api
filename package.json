@@ -9,7 +9,8 @@
     "build": "babel src -d dist --presets es2015,stage-2",
     "deploy": "npm run build",
     "dev": "nodemon ./src/server.js",
-    "db": "cd ./src/migrations && knex migrate:latest --env development"
+    "db": "cd ./src/migrations && knex migrate:latest --env development",
+    "db_down": "cd ./src/migrations && knex migrate:rollback --env development"
   },
   "repository": {
     "type": "git",
