@@ -8,5 +8,5 @@ exports.up = async knex => {
 };
 
 exports.down = async knex => {
-  await knex.schema.dropTableIfExists("order_history");
+  await knex.schema.dropTable("order_history");
 };

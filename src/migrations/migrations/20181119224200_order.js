@@ -1,6 +1,6 @@
 exports.up = async knex => {
   await knex.schema.raw(`
-  CREATE TABLE order(
+  CREATE TABLE order_data(
     id uuid not null primary key default gen_random_uuid(),
     id_client uuid references client(id) not null,
     id_order_history uuid references order_history(id) not null,
@@ -10,5 +10,5 @@ exports.up = async knex => {
 };
 
 exports.down = async knex => {
-  await knex.schema.dropTableIfExists("order");
+  await knex.schema.dropTable("order_data");
 };

@@ -8,4 +8,6 @@ exports.up = async knex => {
   `);
 };
 
-exports.down = function(knex, Promise) {};
+exports.down = async knex => {
+  await knex.schema.dropTable("product");
+};
