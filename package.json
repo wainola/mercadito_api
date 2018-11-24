@@ -4,7 +4,7 @@
   "description": "Api for Mercadito de Larmahue",
   "main": "server.js",
   "scripts": {
-    "test": "./node_modules/.bin/mocha test",
+    "test": "jest src --watchAll",
     "clean": "rimraf build",
     "build": "babel src -d dist --presets es2015,stage-2",
     "deploy": "npm run build",
@@ -45,6 +45,7 @@
     "signale": "^1.1.0"
   },
   "devDependencies": {
+    "babel-preset-env": "^1.7.0",
     "jest": "^23.6.0",
     "nodemon": "^1.9.1"
   },
