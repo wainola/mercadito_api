@@ -39,4 +39,48 @@ exports.clientSchema = Joi.object().keys({
   address: Joi.string().required()
 });
 
-exports.orderHistorySchema = Joi.object().keys({});
+exports.inventorySchema = Joi.object().keys({
+  id: Joi.string()
+    .uuid()
+    .required(),
+  id_categories: Joi.string()
+    .uuid()
+    .required(),
+  product_name: Joi.string().required(),
+  quantity: Joi.string().required(),
+  price: Joi.string().required(),
+  type: Joi.string().required(),
+  description: Joi.string().required(),
+  last_update: Joi.string().required()
+});
+
+exports.ProductListSchema = Joi.object().keys({
+  id: Joi.string()
+    .uuid()
+    .required(),
+  id_inventory: Joi.string()
+    .uuid()
+    .required(),
+  name: Joi.string().required()
+});
+
+exports.OrderDataSchema = Joi.object().keys({
+  id: Joi.string()
+    .uuid()
+    .required(),
+  id_client: Joi.string()
+    .uuid()
+    .required(),
+  id_order_history: Joi.string()
+    .uuid()
+    .required()
+});
+
+exports.ProductSchema = Joi.object().keys({
+  id: Joi.string()
+    .uuid()
+    .required(),
+  id_product_list: Joi.string()
+    .uuid()
+    .required()
+});
