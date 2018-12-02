@@ -82,5 +82,6 @@ exports.ProductSchema = Joi.object().keys({
     .required(),
   id_product_list: Joi.string()
     .uuid()
-    .required()
+    .required(),
+  created_at: Joi.string().required()
 });
