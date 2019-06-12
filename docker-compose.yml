@@ -1,23 +1,9 @@
-version: "2.3"
+version: '2.3'
 services:
   db:
     image: postgres
-    container_name: db
+    container_name: mercadito
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=password
       - POSTGRES_DB=mercadito_api
-  app:
-    container_name: server
-    depends_on:
-      - db
-    build:
-      context: .
-      dockerfile: Dockerfile
-    command: "npm run dev"
-    ports:
-      - "9000:9000"
-    volumes:
-      - .:/usr/server
-    environment:
-      - DATABASE_URL=postgres://postgres:password@db/mercadito_api

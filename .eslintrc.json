@@ -1,8 +1,7 @@
 {
-    "extends": "standard",
-    "rules":{
-      "no-labels": "off",
-      "no-label-var": "off",
-      "semi": "off"
-    }
+  "extends": ["airbnb", "prettier"],
+  "plugins": ["prettier"],
+  "rules": {
+    "prettier/prettier": ["error"]
+  }
 }
