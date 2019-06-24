@@ -1,9 +1,10 @@
-version: '2.3'
+version: '3.4'
 services:
-  db:
+  mercadito_db:
     image: postgres
-    container_name: mercadito
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=password
       - POSTGRES_DB=mercadito_api
+    ports:
+      - '5432:5432'
