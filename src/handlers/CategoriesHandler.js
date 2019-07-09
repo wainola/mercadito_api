@@ -9,6 +9,7 @@ class CategoriesHandler extends Base {
   }
 
   async postCategory(request, response) {
+    console.log('postcategory');
     const { body } = request;
     const validSchema = this.isValid(body, validators.postSchema);
     if (validSchema.error !== null) {

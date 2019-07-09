@@ -2,11 +2,11 @@ const express = require('express');
 
 const router = express.Router();
 
-const CategoriesRoutes = require('./CategoriesRoutes');
+const CategoryHandler = require('../handlers/CategoriesHandler');
 
 // CATEGORIES
-router.get('/categories', CategoriesRoutes.getCategories);
-router.post('/categories', CategoriesRoutes.postCategory);
-router.delete('/categories', CategoriesRoutes.deleteCategory);
+// router.get('/categories', CategoryHandler.getCategories);
+router.post('/categories', CategoryHandler.postCategory);
+// router.delete('/categories', CategoryHandler.deleteCategory);
 
 module.exports = router;
