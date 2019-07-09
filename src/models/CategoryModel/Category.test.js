@@ -7,15 +7,17 @@ const { DATABASE_URL } = process.env;
 describe('Category Model', () => {
   let client;
   let categoryModel;
+
   beforeAll(async () => {
     client = new Client({ connectionString: DATABASE_URL });
     await client.connect();
     categoryModel = new Category(client);
   });
+
   afterEach(async () => {
-    const r = await client.query('DELETE FROM CATEGORY');
-    console.log('Empty table', r.command);
+    await client.query('DELETE FROM CATEGORY');
   });
+
   it('should insert a category on the database', async () => {
     const categoryToInsert = 'huevos';
     const r = await categoryModel.insertCategory('huevos');

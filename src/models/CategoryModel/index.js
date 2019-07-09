@@ -1,4 +1,3 @@
-const client = require('../symbols');
 const Database = require('../index');
 
 class Category extends Database {

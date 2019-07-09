@@ -1,4 +1,4 @@
-const CategoryHandler = require('../../handlers/CategoriesHandler');
+const CategoryHandler = require('../../handlers/CategoryHandler');
 
 class Response {
   constructor() {
@@ -20,8 +20,10 @@ class Response {
 
 describe('CategoryHandler', () => {
   let res;
+  let categoryHandler;
   beforeAll(() => {
     res = new Response();
+    categoryHandler = new CategoryHandler();
   });
   it('should return 422 if passed the wrong body', async () => {
     const categorytoSend = {
@@ -34,7 +36,7 @@ describe('CategoryHandler', () => {
       body: categorytoSend
     };
 
-    const r = await CategoryHandler.postCategory(req, res);
+    const r = await categoryHandler.postCategory(req, res);
     expect(r.statusCode).toBe(422);
   });
 
@@ -46,7 +48,7 @@ describe('CategoryHandler', () => {
     };
 
     const req = { body: categoryToSend };
-    const r = await CategoryHandler.postCategory(req, res);
+    const r = await categoryHandler.postCategory(req, res);
     expect(r.statusCode).toBe(200);
   });
 });

@@ -3,19 +3,16 @@ const CategoryModel = require('../models/CategoryModel');
 const validators = require('./validators/CategoryValidators');
 
 class CategoriesHandler extends Base {
-  constructor() {
+  constructor(client = null) {
     super();
-    this.categoryModel = new CategoryModel();
+    this.categoryModel = new CategoryModel(client);
   }
 
   async postCategory(request, response) {
-    console.log('postcategory');
     const { body } = request;
     const validSchema = this.isValid(body, validators.postSchema);
     if (validSchema.error !== null) {
-      return response
-        .status(422)
-        .send({ error: true, msg: 'malformed json', meta: validSchema.error });
+      return response.status(422).send({ error: true, msg: 'malformed json' });
     }
     const {
       category: { category_name: category }
@@ -25,4 +22,4 @@ class CategoriesHandler extends Base {
   }
 }
 
-module.exports = new CategoriesHandler();
+module.exports = CategoriesHandler;
