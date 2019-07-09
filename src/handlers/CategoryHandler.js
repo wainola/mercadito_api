@@ -2,10 +2,11 @@ const Base = require('./BaseHandler');
 const CategoryModel = require('../models/CategoryModel');
 const validators = require('./validators/CategoryValidators');
 
-class CategoriesHandler extends Base {
+class CategoryHandler extends Base {
   constructor(client = null) {
     super();
     this.categoryModel = new CategoryModel(client);
+    this.postCategory = this.postCategory.bind(this);
   }
 
   async postCategory(request, response) {
@@ -22,4 +23,4 @@ class CategoriesHandler extends Base {
   }
 }
 
-module.exports = CategoriesHandler;
+module.exports = CategoryHandler;

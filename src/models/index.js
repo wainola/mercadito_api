@@ -8,12 +8,13 @@ class Database {
   }
 
   async execQuery(query) {
-    try {
-      const qr = await this[client].query(query);
-      return qr.rows;
-    } catch (error) {
-      return error;
-    }
+    return this[client]
+      .query(query)
+      .then(data => data.rows)
+      .catch(err => {
+        console.log(err);
+        return err;
+      });
   }
 }
 

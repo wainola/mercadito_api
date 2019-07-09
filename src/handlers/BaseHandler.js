@@ -1,9 +1,9 @@
 const Joi = require('joi');
 
-class Base {
+class BaseHandler {
   isValid(body, schema) {
     return Joi.validate(body, schema);
   }
 }
 
-module.exports = Base;
+module.exports = BaseHandler;
