@@ -9,12 +9,7 @@ class CategoryHandler extends Base {
     this.postCategory = this.postCategory.bind(this);
   }
 
-  async postCategory(request, response) {
-    const { body } = request;
-    const validSchema = this.isValid(body, validators.postSchema);
-    if (validSchema.error !== null) {
-      return response.status(422).send({ error: true, msg: 'malformed json' });
-    }
+  async postCategory({ body }, response) {
     const {
       category: { category_name: category }
     } = body;
@@ -22,7 +17,26 @@ class CategoryHandler extends Base {
     return response.status(200).send({ data: categoryInserted });
   }
 
-  async deleteCategory({ body }, response) {}
+  async updateCategory({ body }, response) {
+    const {
+      category: { id, category_name: category }
+    } = body;
+    const categoryUpdated = await this.categoryModel.updateCategory(id, category);
+    return response.status(200).send({ data: categoryUpdated });
+  }
+
+  async deleteCategory({ body }, response) {
+    const {
+      category: { id }
+    } = body;
+    const categoryDeleted = await this.categoryModel.deleteCategory(id);
+    return response.status(200).send({ data: categoryDeleted });
+  }
+
+  async getCategories(_, response) {
+    const categories = await this.categoryModel.getCategories();
+    return response.status(200).send({ data: categories });
+  }
 }
 
 module.exports = CategoryHandler;

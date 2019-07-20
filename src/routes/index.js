@@ -14,8 +14,9 @@ const client = new Pool({ connectionString: DATABASE_URL });
 const categoryHandler = new CategoryHandler(client);
 
 // CATEGORIES
-// router.get('/categories', categoryHandler.getCategories);
+router.get('/category', categoryHandler.getCategories);
 router.post('/category', JSONValidatorMiddleware, categoryHandler.postCategory);
-// router.delete('/categories', categoryHandler.deleteCategory);
+router.patch('/category', JSONValidatorMiddleware, categoryHandler.updateCategory);
+router.delete('/category', JSONValidatorMiddleware, categoryHandler.deleteCategory);
 
 module.exports = router;
