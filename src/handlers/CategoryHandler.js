@@ -21,6 +21,8 @@ class CategoryHandler extends Base {
     const categoryInserted = await this.categoryModel.insertCategory(category);
     return response.status(200).send({ data: categoryInserted });
   }
+
+  async deleteCategory({ body }, response) {}
 }
 
 module.exports = CategoryHandler;
