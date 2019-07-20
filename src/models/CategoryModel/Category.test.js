@@ -1,8 +1,10 @@
-require('dotenv').config();
-const { Client } = require('pg');
 const Category = require('./index');
 
-const { DATABASE_URL } = process.env;
+function ProxiedModel(target) {
+  const internalHandler = {
+    get(target, propName) {}
+  };
+}
 
 describe('Category Model', () => {
   let client;
