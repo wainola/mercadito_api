@@ -2,7 +2,7 @@ const client = require('./symbols');
 const Utils = require('../utils');
 
 class Database {
-  constructor(cli) {
+  constructor(cli = null) {
     this[client] = cli;
     this.utils = Utils;
   }
