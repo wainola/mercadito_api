@@ -1,6 +1,5 @@
 const Base = require('./BaseHandler');
 const CategoryModel = require('../models/CategoryModel');
-const validators = require('./validators/CategoryValidators');
 
 class CategoryHandler extends Base {
   constructor(client = null) {

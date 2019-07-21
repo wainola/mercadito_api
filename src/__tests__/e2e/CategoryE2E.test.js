@@ -1,6 +1,5 @@
 require('dotenv').config();
 const { Pool } = require('pg');
-const { request, response } = require('express');
 const CategoryHandler = require('../../handlers/CategoryHandler');
 
 const { DATABASE_URL } = process.env;
@@ -10,6 +9,6 @@ const categoryHandler = new CategoryHandler(client);
 
 describe('Category E2E', () => {
   it('should work', () => {
-    expect(true).toBe(true)
-  })
+    expect(true).toBe(true);
+  });
 });
