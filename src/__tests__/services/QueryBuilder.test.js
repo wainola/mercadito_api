@@ -26,6 +26,14 @@ describe('QueryBuilderProxy', () => {
       getData() {
         return 'Instance 1';
       }
+
+      printSomeData() {
+        console.log('foo');
+      }
+
+      funkyMethod() {
+        return null;
+      }
     }
     class I2 {
       someData() {
@@ -37,6 +45,14 @@ describe('QueryBuilderProxy', () => {
     const i2 = new I2();
 
     const qb = new QueryBuilderProxy([i1, i2]);
-    qb.getInstancesAndMethods();
+    const r = qb.getInstancesAndMethods();
+    const expectedInstancesNames = ['I1', 'I2'];
+    const instancesNames = r.map(item => item.instanceName);
+    const methodsNames = r.map(item => item.methods);
+    const arr1 = methodsNames[0];
+    const arr2 = methodsNames[1];
+    expect(instancesNames).toEqual(expectedInstancesNames);
+    expect(arr1).toEqual(['getData', 'printSomeData', 'funkyMethod']);
+    expect(arr2).toEqual(['someData']);
   });
 });
