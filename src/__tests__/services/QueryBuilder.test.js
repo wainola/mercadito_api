@@ -21,7 +21,7 @@ describe('QueryBuilderProxy', () => {
     const proxiedT1 = qb.setProxy(t1);
     expect(util.types.isProxy(proxiedT1)).toBe(true);
   });
-  it.only('should return the instances name and the method names for instances array', () => {
+  it('should return the instances name and the method names for instances array', () => {
     class I1 {
       getData() {
         return 'Instance 1';
@@ -54,5 +54,18 @@ describe('QueryBuilderProxy', () => {
     expect(instancesNames).toEqual(expectedInstancesNames);
     expect(arr1).toEqual(['getData', 'printSomeData', 'funkyMethod']);
     expect(arr2).toEqual(['someData']);
+  });
+
+  it.only('should return a dictionary with a mapping between customary methods names and query operations', () => {
+    class I1 {
+      insertData() {}
+
+      updateData() {}
+
+      getData() {}
+    }
+    const i1 = new I1();
+    const qb = new QueryBuilderProxy([i1]);
+    console.log(qb.getInstancesAndMethods());
   });
 });

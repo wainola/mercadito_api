@@ -2,6 +2,7 @@ function QueryBuilderProxy(instances) {
   this.instances = instances;
   this.internalHandler = null;
   this.instancesAndMethods = this.setInstancesAndMethods(instances);
+  this.queryDictionary = this.setQueryActions(this.instancesAndMethods);
 }
 
 QueryBuilderProxy.prototype.setInternalHandler = function setupInternalHandler() {
@@ -72,5 +73,11 @@ QueryBuilderProxy.prototype.setInstancesAndMethods = function setupInstancesAndM
 QueryBuilderProxy.prototype.getInstancesAndMethods = function resolveInstancesAndMethods() {
   return this.instancesAndMethods;
 };
+
+QueryBuilderProxy.prototype.setQueryActions = function setupQueryActions(
+  instancesNameAndMethods
+) {};
+
+QueryBuilderProxy.prototype.getDictionaryOfQueryActions = function resolveQueryActions() {};
 
 module.exports = QueryBuilderProxy;
