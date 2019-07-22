@@ -1,7 +1,7 @@
 const Database = require('../index');
 
 class Stock extends Database {
-  async buildQuery(type, data, id) {
+  async buildQuery(type, data = null, id = null) {
     switch (type) {
       case 'insert':
         return `INSERT INTO STOCK (stock_quantity) VALUES (${data}) WHERE id = '${id}' RETURNING *;`;
