@@ -56,16 +56,22 @@ describe('QueryBuilderProxy', () => {
     expect(arr2).toEqual(['someData']);
   });
 
-  it.only('should return a dictionary with a mapping between customary methods names and query operations', () => {
+  it('should return a dictionary with a mapping between customary methods names and query operations on initializacion of the proxy', () => {
     class I1 {
       insertData() {}
 
       updateData() {}
 
       getData() {}
+
+      deleteData() {}
     }
     const i1 = new I1();
     const qb = new QueryBuilderProxy([i1]);
-    console.log(qb.getInstancesAndMethods());
+    const expectedMapping = ['insert', 'update', 'delete', 'get'];
+    const { queryDictionary } = qb;
+    const m = queryDictionary.map(item => item.action);
+    expect(m).toEqual(expectedMapping);
   });
+  it.only('should return some query formed based on input', () => {});
 });

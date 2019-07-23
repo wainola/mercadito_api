@@ -9,6 +9,17 @@ QueryBuilderProxy.prototype.setInternalHandler = function setupInternalHandler()
   const internalHandlerObject = {
     get(target, propName) {
       return function internalCallForProxiedInstance(...args) {
+        /**
+         * THE PROP NAME IS ONE OF THE NAME METHOD
+         * THIS NAMES SHOULD BE MAPPED TO A DICTIONARY
+         * THIS DICTIONARY SHOULD HAVE FOR ALL THE METHODS, A QUERY ACTION
+         * IF MORE THAN ONE PARAMETERS IS PASSED
+         * WE CAN ASSUME THAT THE SECOND PARAMETER SHOULD BE ON A WHERE CLAUSE
+         * THIS ASUMPTION IS NOT EXHAUSTIVE.
+         * IF THIS REALLY IS A QUERY BUILDER, MORE THANT ONE PARAMETER
+         * SHOULD IMPLY MORE FIELDS TO GET
+         */
+        const getQueryAction = null;
         return target[propName](...args);
       };
     }
@@ -74,9 +85,49 @@ QueryBuilderProxy.prototype.getInstancesAndMethods = function resolveInstancesAn
   return this.instancesAndMethods;
 };
 
-QueryBuilderProxy.prototype.setQueryActions = function setupQueryActions(
-  instancesNameAndMethods
-) {};
+QueryBuilderProxy.prototype.setQueryActions = function setupQueryActions(instancesNameAndMethods) {
+  const methods = instancesNameAndMethods.map(item => item.methods)[0];
+  const prefixedMethods = this.getPrefixedOnMethods(methods);
+  const sortedQueryActions = this.sortMethodsNames(prefixedMethods);
+  return sortedQueryActions;
+};
+
+QueryBuilderProxy.prototype.sortMethodsNames = function resolveSortedMethods(methods) {
+  const expectedOrder = ['insert', 'update', 'delete', 'get'];
+  const sortedMethods = methods.sort((a, b) => {
+    const idxA = expectedOrder.indexOf(a.action);
+    const idxB = expectedOrder.indexOf(b.action);
+    if (idxA < idxB) return -1;
+    if (idxA > idxB) return 1;
+    return 0;
+  });
+  return sortedMethods;
+};
+
+QueryBuilderProxy.prototype.getPrefixedOnMethods = function resolvePrefixOnMethodNames(methods) {
+  const queryMapping = ['insert', 'update', 'delete', 'get'];
+  return methods.reduce((acc, item) => {
+    let r;
+    if (item.includes('insert')) {
+      r = queryMapping.indexOf('insert');
+      acc.push({ action: queryMapping[r], whereClause: false });
+    }
+    if (item.includes('update')) {
+      r = queryMapping.indexOf('update');
+      acc.push({ action: queryMapping[r], whereClause: true });
+    }
+    if (item.includes('delete')) {
+      r = queryMapping.indexOf('delete');
+      acc.push({ action: queryMapping[r], whereClause: true });
+    }
+    if (item.includes('get')) {
+      r = queryMapping.indexOf('get');
+      acc.push({ action: queryMapping[r], whereClause: false });
+    }
+
+    return acc;
+  }, []);
+};
 
 QueryBuilderProxy.prototype.getDictionaryOfQueryActions = function resolveQueryActions() {};
 
