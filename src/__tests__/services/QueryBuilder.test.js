@@ -73,5 +73,20 @@ describe('QueryBuilderProxy', () => {
     const m = queryDictionary.map(item => item.action);
     expect(m).toEqual(expectedMapping);
   });
-  it.only('should return some query formed based on input', () => {});
+  it.only('should return some query formed based on input', () => {
+    class I1 {
+      constructor() {
+        this.attributes = new Set().add('name');
+      }
+
+      insertData(param) {
+        return param;
+      }
+    }
+
+    const i1 = new I1();
+    const qb = new QueryBuilderProxy([i1]);
+    const i1Proxiado = qb.setProxy(i1);
+    i1Proxiado.insertData('tallarines');
+  });
 });

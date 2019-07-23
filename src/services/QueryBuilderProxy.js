@@ -3,9 +3,12 @@ function QueryBuilderProxy(instances) {
   this.internalHandler = null;
   this.instancesAndMethods = this.setInstancesAndMethods(instances);
   this.queryDictionary = this.setQueryActions(this.instancesAndMethods);
+  this.setInternalHandler = this.setInternalHandler.bind(this);
+  // this.attributes = this.getAttributes()
 }
 
 QueryBuilderProxy.prototype.setInternalHandler = function setupInternalHandler() {
+  const { queryDictionary, generateQuery, instancesAndMethods } = this;
   const internalHandlerObject = {
     get(target, propName) {
       return function internalCallForProxiedInstance(...args) {
@@ -19,7 +22,16 @@ QueryBuilderProxy.prototype.setInternalHandler = function setupInternalHandler()
          * IF THIS REALLY IS A QUERY BUILDER, MORE THANT ONE PARAMETER
          * SHOULD IMPLY MORE FIELDS TO GET
          */
+        // console.log(propName, args, target.constructor.name);
         const getQueryAction = null;
+        const retreivedAction = queryDictionary.map(item =>
+          item.methodOriginalName === propName ? item.action : null
+        );
+        const instancesName = instancesAndMethods
+          .map(item => item.instanceName)
+          .filter(item => item === target.constructor.name);
+
+        const getQuery = generateQuery(retreivedAction, args, instancesName, target.attributes);
         return target[propName](...args);
       };
     }
@@ -110,25 +122,39 @@ QueryBuilderProxy.prototype.getPrefixedOnMethods = function resolvePrefixOnMetho
     let r;
     if (item.includes('insert')) {
       r = queryMapping.indexOf('insert');
-      acc.push({ action: queryMapping[r], whereClause: false });
+      acc.push({ action: queryMapping[r], whereClause: false, methodOriginalName: item });
     }
     if (item.includes('update')) {
       r = queryMapping.indexOf('update');
-      acc.push({ action: queryMapping[r], whereClause: true });
+      acc.push({ action: queryMapping[r], whereClause: true, methodOriginalName: item });
     }
     if (item.includes('delete')) {
       r = queryMapping.indexOf('delete');
-      acc.push({ action: queryMapping[r], whereClause: true });
+      acc.push({ action: queryMapping[r], whereClause: true, methodOriginalName: item });
     }
     if (item.includes('get')) {
       r = queryMapping.indexOf('get');
-      acc.push({ action: queryMapping[r], whereClause: false });
+      acc.push({ action: queryMapping[r], whereClause: false, methodOriginalName: item });
     }
 
     return acc;
   }, []);
 };
 
-QueryBuilderProxy.prototype.getDictionaryOfQueryActions = function resolveQueryActions() {};
+QueryBuilderProxy.prototype.generateQuery = function resolveQuery(
+  typeOfQuery,
+  dataToInsert,
+  instanceName,
+  attributes
+) {
+  console.log('instanceName', dataToInsert);
+  const [type] = typeOfQuery;
+  const [tableName] = instanceName;
+  const [data] = dataToInsert;
+  switch (type) {
+    case 'insert':
+      return `INSERT INTO ${tableName}`;
+  }
+};
 
 module.exports = QueryBuilderProxy;
