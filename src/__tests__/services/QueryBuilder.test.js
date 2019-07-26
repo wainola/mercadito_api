@@ -73,7 +73,7 @@ describe('QueryBuilderProxy', () => {
     const m = queryDictionary.map(item => item.action);
     expect(m).toEqual(expectedMapping);
   });
-  it.only('should return some query formed based on input', () => {
+  it('should return some query formed based on input', () => {
     class I1 {
       constructor() {
         this.attributes = new Set().add('name');
@@ -88,5 +88,25 @@ describe('QueryBuilderProxy', () => {
     const qb = new QueryBuilderProxy([i1]);
     const i1Proxiado = qb.setProxy(i1);
     i1Proxiado.insertData('tallarines');
+  });
+  it.only('should', () => {
+    class I1 {
+      constructor() {
+        this.attributes = new Set()
+          .add('name')
+          .add('lastname')
+          .add('age');
+      }
+
+      insertData(params) {
+        return params;
+      }
+    }
+
+    const i1 = new I1();
+    const qb = new QueryBuilderProxy([i1]);
+    const i1Proxiado = qb.setProxy(i1);
+    const result = i1Proxiado.insertData({ name: 'nicolas', lastname: 'riquelme', age: 32 });
+    console.log('result1', result);
   });
 });
