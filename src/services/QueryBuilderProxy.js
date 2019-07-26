@@ -1,3 +1,9 @@
+/**
+ * QueryBuilderProxy
+ * This Class intercep get property access, determines if a method is related with some database operation and
+ * construct the query around that.
+ */
+
 function QueryBuilderProxy(instances) {
   this.instances = instances;
   this.internalHandler = null;
@@ -7,23 +13,18 @@ function QueryBuilderProxy(instances) {
   this.setInternalHandler = this.setInternalHandler.bind(this);
 }
 
+/**
+ * Return a handler object with a get trap to intersect the property accesor of an instance
+ */
 QueryBuilderProxy.prototype.setInternalHandler = function setupInternalHandler() {
   const { queryDictionary, generateQuery, instancesAndMethods, attributes } = this;
   const self = this;
   const internalHandlerObject = {
     get(target, propName) {
+      /**
+       * This function receives the method arguments of the proxied instance.
+       */
       return function internalCallForProxiedInstance(...args) {
-        /**
-         * THE PROP NAME IS ONE OF THE NAME METHOD
-         * THIS NAMES SHOULD BE MAPPED TO A DICTIONARY
-         * THIS DICTIONARY SHOULD HAVE FOR ALL THE METHODS, A QUERY ACTION
-         * IF MORE THAN ONE PARAMETERS IS PASSED
-         * WE CAN ASSUME THAT THE SECOND PARAMETER SHOULD BE ON A WHERE CLAUSE
-         * THIS ASUMPTION IS NOT EXHAUSTIVE.
-         * IF THIS REALLY IS A QUERY BUILDER, MORE THANT ONE PARAMETER
-         * SHOULD IMPLY MORE FIELDS TO GET
-         */
-        // console.log(propName, args, target.constructor.name);
         const getQueryAction = null;
         const retreivedAction = queryDictionary.map(item =>
           item.methodOriginalName === propName ? item.action : null
@@ -47,22 +48,34 @@ QueryBuilderProxy.prototype.setInternalHandler = function setupInternalHandler()
   return this.internalHandler;
 };
 
+/**
+ * Returns a Proxy of the instance passed
+ */
 QueryBuilderProxy.prototype.setProxy = function setProxyToInstance(target) {
   return new Proxy(target, this.setInternalHandler());
 };
 
+/**
+ * Return the prototype of an instance
+ */
 QueryBuilderProxy.prototype.getPrototypesOfInstances = function resolvePrototypeOfInstances(
   instance
 ) {
   return Reflect.getPrototypeOf(instance);
 };
 
+/**
+ * Returns the property descriptor of the instances prototype.
+ */
 QueryBuilderProxy.prototype.getInternalPropertiesDescriptorOfPrototype = function resolveInternalProperties(
   instancePrototype
 ) {
   return Object.getOwnPropertyDescriptors(instancePrototype);
 };
 
+/**
+ * Returns the entries (keys, values) on the prototype of the instance
+ */
 QueryBuilderProxy.prototype.getEntriesOfPrototype = function resolveEntriesOfPrototype(
   instancePrototype
 ) {
@@ -72,18 +85,27 @@ QueryBuilderProxy.prototype.getEntriesOfPrototype = function resolveEntriesOfPro
   }, []);
 };
 
+/**
+ * Returns only the names of the methods of the instance
+ */
 QueryBuilderProxy.prototype.filterOnlyStrings = function resolveStringsMethod(
   instancePrototypeEntries
 ) {
   return instancePrototypeEntries.filter(item => typeof item === 'string');
 };
 
+/**
+ * Return the methods of the instance
+ */
 QueryBuilderProxy.prototype.filterByMethodNames = function resolveMethodNames(
   instancePrototypeEntries
 ) {
   return instancePrototypeEntries.filter((_, idx) => idx !== 0);
 };
 
+/**
+ * Returns an object that setup the instance name and the methods names.
+ */
 QueryBuilderProxy.prototype.setInstancesAndMethods = function setupInstancesAndMethodsToAnObject(
   instances
 ) {
@@ -99,10 +121,17 @@ QueryBuilderProxy.prototype.setInstancesAndMethods = function setupInstancesAndM
   return instancesNamesAndMethods;
 };
 
+/**
+ * Return instances and methods of the target instance passed on the Proxy
+ */
 QueryBuilderProxy.prototype.getInstancesAndMethods = function resolveInstancesAndMethods() {
   return this.instancesAndMethods;
 };
 
+/**
+ * Returns the query actions sorted.
+ * The expected query action order is: [insert, update, delete, get]
+ */
 QueryBuilderProxy.prototype.setQueryActions = function setupQueryActions(instancesNameAndMethods) {
   const methods = instancesNameAndMethods.map(item => item.methods)[0];
   const prefixedMethods = this.getPrefixedOnMethods(methods);
@@ -110,6 +139,9 @@ QueryBuilderProxy.prototype.setQueryActions = function setupQueryActions(instanc
   return sortedQueryActions;
 };
 
+/**
+ * Return the methods names sorted by the expeted order of the query actions
+ */
 QueryBuilderProxy.prototype.sortMethodsNames = function resolveSortedMethods(methods) {
   const expectedOrder = ['insert', 'update', 'delete', 'get'];
   const sortedMethods = methods.sort((a, b) => {
@@ -122,6 +154,9 @@ QueryBuilderProxy.prototype.sortMethodsNames = function resolveSortedMethods(met
   return sortedMethods;
 };
 
+/**
+ * Return the methods striped by postfix name.
+ */
 QueryBuilderProxy.prototype.getPrefixedOnMethods = function resolvePrefixOnMethodNames(methods) {
   const queryMapping = ['insert', 'update', 'delete', 'get'];
   return methods.reduce((acc, item) => {
@@ -147,6 +182,9 @@ QueryBuilderProxy.prototype.getPrefixedOnMethods = function resolvePrefixOnMetho
   }, []);
 };
 
+/**
+ * Returns the query to use on the database instance
+ */
 QueryBuilderProxy.prototype.generateQuery = function resolveQuery([
   typeOfQuery,
   dataToInsert,
@@ -169,6 +207,9 @@ QueryBuilderProxy.prototype.generateQuery = function resolveQuery([
   return null;
 };
 
+/**
+ * Return the attributes of the instances passed on the proxy
+ */
 QueryBuilderProxy.prototype.getAttributes = function resolveAttributesByInstances(
   originalInstance
 ) {
@@ -182,10 +223,19 @@ QueryBuilderProxy.prototype.getAttributes = function resolveAttributesByInstance
   return attributesMapping;
 };
 
+/**
+ * Return a string with the part of the query related to the attributes describe to pass on a DDL sentence
+ */
 QueryBuilderProxy.prototype.buildAttributesQuery = function resolveAttributesString(attributes) {
   return this.generateListForQuery(attributes, 'columns');
 };
 
+/**
+ * Returns the List of values for a query corresponding to the values that one should pass on a DDL sentence.
+ * It checks the data type of the data.
+ * It can receive a Object, Array or a String.
+ * TODO: should return a error if passed the wrong type of argument
+ */
 QueryBuilderProxy.prototype.processDataByInspection = function resolveData(data) {
   const dataType = this.checkDataType(data);
   switch (dataType) {
@@ -199,6 +249,9 @@ QueryBuilderProxy.prototype.processDataByInspection = function resolveData(data)
   }
 };
 
+/**
+ * Return the data type of the arguments passed to the instance method
+ */
 QueryBuilderProxy.prototype.checkDataType = function resolveDataType(data) {
   if (Array.isArray(data)) {
     return 'array';
@@ -206,10 +259,16 @@ QueryBuilderProxy.prototype.checkDataType = function resolveDataType(data) {
   return typeof data;
 };
 
+/**
+ * Return the last item of an array.
+ */
 QueryBuilderProxy.prototype.getLastItemOfArray = function resolveLastItem(arr) {
   return arr.filter((_, idx, self) => idx === self.length - 1);
 };
 
+/**
+ * Return the list of values to user in que DDL sentence
+ */
 QueryBuilderProxy.prototype.generateListForQuery = function resolveListQuery(data, context) {
   const [lastItem] = this.getLastItemOfArray(data);
   return data.reduce((acc, item) => {
