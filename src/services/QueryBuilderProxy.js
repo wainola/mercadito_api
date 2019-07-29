@@ -215,6 +215,10 @@ QueryBuilderProxy.prototype.generateQuery = function resolveQuery([
       const setColumnsSentences = this.generateSetColumnsSentences(dataToInsert, attributes);
       query = `UPDATE ${tableName}`;
       return query;
+    case 'delete':
+      return '';
+    case 'get':
+      return '';
     default:
       null;
   }
