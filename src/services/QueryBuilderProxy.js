@@ -4,7 +4,10 @@
  * construct the query around that.
  */
 
-function QueryBuilderProxy(instances) {
+function QueryBuilderProxy(instances = null) {
+  if (!instances.length) {
+    return;
+  }
   this.instances = instances;
   this.internalHandler = null;
   this.instancesAndMethods = this.setInstancesAndMethods(instances);
@@ -184,6 +187,10 @@ QueryBuilderProxy.prototype.getPrefixedOnMethods = function resolvePrefixOnMetho
 
 /**
  * Returns the query to use on the database instance
+ * @param string typeOfQuery => insert, update, delete, get
+ * @param dataToInsert => Array or Object
+ * @param [instanceName]
+ * @param [attributes]
  */
 QueryBuilderProxy.prototype.generateQuery = function resolveQuery([
   typeOfQuery,
@@ -191,15 +198,22 @@ QueryBuilderProxy.prototype.generateQuery = function resolveQuery([
   instanceName,
   attributes
 ]) {
+  console.log(typeOfQuery, dataToInsert, instanceName, attributes);
   const attributesQuery = this.buildAttributesQuery(attributes);
   const parentAttributes = `(${attributesQuery})`;
   const [type] = typeOfQuery;
   const [tableName] = instanceName;
   const [data] = dataToInsert;
   const processedDataToInsert = this.processDataByInspection(data);
+  console.log('data proceesed', processedDataToInsert);
+  let query;
   switch (type) {
     case 'insert':
-      const query = `INSERT INTO ${tableName} ${parentAttributes} VALUES (${processedDataToInsert}) RETURNING *;`;
+      query = `INSERT INTO ${tableName} ${parentAttributes} VALUES (${processedDataToInsert}) RETURNING *;`;
+      return query;
+    case 'update':
+      const setColumnsSentences = this.generateSetColumnsSentences(dataToInsert, attributes);
+      query = `UPDATE ${tableName}`;
       return query;
     default:
       null;
@@ -209,12 +223,15 @@ QueryBuilderProxy.prototype.generateQuery = function resolveQuery([
 
 /**
  * Return the attributes of the instances passed on the proxy
+ * @param {Object} originalInstance
+ * @returns [attributesName] array of the names of the attributes inside the instance
  */
 QueryBuilderProxy.prototype.getAttributes = function resolveAttributesByInstances(
   originalInstance
 ) {
   const [inst] = originalInstance;
   const { attributes } = inst;
+  // ATTRIBUTES IS A SET, TO WITH VALUES() METHODS IT RETURNS A ITERATOR
   const values = attributes.values();
   const attributesMapping = [];
   for (const v of values) {
@@ -235,22 +252,25 @@ QueryBuilderProxy.prototype.buildAttributesQuery = function resolveAttributesStr
  * It checks the data type of the data.
  * It can receive a Object, Array or a String.
  * TODO: should return a error if passed the wrong type of argument
+ * @param [data]
+ * @param {data}
+ * return string string in the form of 'something', 'somewhere', ...
  */
 QueryBuilderProxy.prototype.processDataByInspection = function resolveData(data) {
   const dataType = this.checkDataType(data);
-  switch (dataType) {
-    case 'array':
-      return this.generateListForQuery(data, 'values');
-    case 'object':
-      const objValues = Object.values(data);
-      return this.generateListForQuery(objValues, 'values');
-    default:
-      return data;
+  if (dataType !== 'object') {
+    return this.generateListForQuery(data, 'values');
   }
+  const objValues = Object.values(data);
+  return this.generateListForQuery(objValues, 'values');
 };
 
 /**
  * Return the data type of the arguments passed to the instance method
+ * @param [data] array of data
+ * @param {object}
+ * @param string
+ * @returns string with the data type of the argument passed
  */
 QueryBuilderProxy.prototype.checkDataType = function resolveDataType(data) {
   if (Array.isArray(data)) {
@@ -261,13 +281,27 @@ QueryBuilderProxy.prototype.checkDataType = function resolveDataType(data) {
 
 /**
  * Return the last item of an array.
+ * @param [columns] array of columns values
+ * @param [values] array of values
+ * @returns [item] the last item of the passed array
  */
 QueryBuilderProxy.prototype.getLastItemOfArray = function resolveLastItem(arr) {
   return arr.filter((_, idx, self) => idx === self.length - 1);
 };
 
 /**
- * Return the list of values to user in que DDL sentence
+ * Return the list of values to user in que DML sentence
+ * @param [columns] Array of columns names
+ * @param [values] Array of values names
+ * @param string context Either VALUES or COLUMNS
+ * @returns string String with columns names or the values names
+ * EX:
+ * If we have the following insertion statement
+ * INSERT INTO TABLE (COLUMN1, COLUMN2, COLUMN3) VALUES (VALUE1, VALUE2, VALUE3)
+ * This methods returns the (COLUMN1, COLUMN2, COLUMN3) part if the context value is COLUMNS
+ * or returns the (VALUE1, VALUE2, VALUE3) part if the context value is VALUES
+ *
+ * TODO: check the string construction if passed a number or other datatype that is not a string
  */
 QueryBuilderProxy.prototype.generateListForQuery = function resolveListQuery(data, context) {
   const [lastItem] = this.getLastItemOfArray(data);
@@ -279,6 +313,13 @@ QueryBuilderProxy.prototype.generateListForQuery = function resolveListQuery(dat
     acc += context !== 'values' ? `${item}, ` : `'${item}', `;
     return acc;
   }, '');
+};
+
+QueryBuilderProxy.prototype.generateSetColumnsSentences = function resolveSetColumnsSentences(
+  dataToInsert,
+  attributesOfInstance
+) {
+  console.log('d:', dataToInsert, attributesOfInstance);
 };
 
 module.exports = QueryBuilderProxy;
