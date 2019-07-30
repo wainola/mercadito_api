@@ -22,27 +22,38 @@ function QueryBuilderProxy(instances = null) {
 QueryBuilderProxy.prototype.setInternalHandler = function setupInternalHandler() {
   const { queryDictionary, generateQuery, instancesAndMethods, attributes } = this;
   const self = this;
+
   const internalHandlerObject = {
     get(target, propName) {
       /**
        * This function receives the method arguments of the proxied instance.
        */
       return function internalCallForProxiedInstance(...args) {
-        const getQueryAction = null;
-        const retreivedAction = queryDictionary.map(item =>
-          item.methodOriginalName === propName ? item.action : null
-        );
+        const [calledMethod] = queryDictionary.filter(item => item.methodOriginalName === propName);
+
+        const { action } = calledMethod;
+
         const instancesName = instancesAndMethods
           .map(item => item.instanceName)
           .filter(item => item === target.constructor.name);
 
-        const getQuery = generateQuery.call(self, [
-          retreivedAction,
-          args,
-          instancesName,
-          attributes
-        ]);
-        return target[propName](getQuery);
+        let getQuery;
+        switch (action) {
+          case 'insert':
+            getQuery = generateQuery.call(self, [calledMethod, args, instancesName, attributes]);
+            return target[propName](getQuery);
+          case 'update':
+            getQuery = generateQuery.call(self, [calledMethod, args, instancesName, attributes]);
+            return target[propName](getQuery);
+          case 'delete':
+            getQuery = generateQuery.call(self, [calledMethod, args, instancesName]);
+            return getQuery;
+          case 'get':
+            getQuery = generateQuery.call(self, [calledMethod, args, instancesName]);
+            return getQuery;
+          default:
+            return null;
+        }
       };
     }
   };
@@ -138,6 +149,7 @@ QueryBuilderProxy.prototype.getInstancesAndMethods = function resolveInstancesAn
 QueryBuilderProxy.prototype.setQueryActions = function setupQueryActions(instancesNameAndMethods) {
   const methods = instancesNameAndMethods.map(item => item.methods)[0];
   const prefixedMethods = this.getPrefixedOnMethods(methods);
+  // console.log('getPrefixedMethods', prefixedMethods);
   const sortedQueryActions = this.sortMethodsNames(prefixedMethods);
   return sortedQueryActions;
 };
@@ -162,6 +174,7 @@ QueryBuilderProxy.prototype.sortMethodsNames = function resolveSortedMethods(met
  */
 QueryBuilderProxy.prototype.getPrefixedOnMethods = function resolvePrefixOnMethodNames(methods) {
   const queryMapping = ['insert', 'update', 'delete', 'get'];
+  // console.log('methods', methods);
   return methods.reduce((acc, item) => {
     let r;
     if (item.includes('insert')) {
@@ -178,7 +191,7 @@ QueryBuilderProxy.prototype.getPrefixedOnMethods = function resolvePrefixOnMetho
     }
     if (item.includes('get')) {
       r = queryMapping.indexOf('get');
-      acc.push({ action: queryMapping[r], whereClause: false, methodOriginalName: item });
+      acc.push({ action: queryMapping[r], whereClause: true, methodOriginalName: item });
     }
 
     return acc;
@@ -196,29 +209,39 @@ QueryBuilderProxy.prototype.generateQuery = function resolveQuery([
   typeOfQuery,
   dataToInsert,
   instanceName,
-  attributes
+  attributes = []
 ]) {
-  console.log(typeOfQuery, dataToInsert, instanceName, attributes);
   const attributesQuery = this.buildAttributesQuery(attributes);
   const parentAttributes = `(${attributesQuery})`;
-  const [type] = typeOfQuery;
+  const { action } = typeOfQuery;
   const [tableName] = instanceName;
-  const [data] = dataToInsert;
-  const processedDataToInsert = this.processDataByInspection(data);
-  console.log('data proceesed', processedDataToInsert);
+  let data;
+  let id;
+
+  let processedDataToInsert;
+  if (action !== 'delete') {
+    [data, id] = dataToInsert;
+    processedDataToInsert = this.processDataByInspection(data);
+  } else {
+    [id] = dataToInsert;
+  }
+
   let query;
-  switch (type) {
+  switch (action) {
     case 'insert':
       query = `INSERT INTO ${tableName} ${parentAttributes} VALUES (${processedDataToInsert}) RETURNING *;`;
       return query;
     case 'update':
-      const setColumnsSentences = this.generateSetColumnsSentences(dataToInsert, attributes);
-      query = `UPDATE ${tableName}`;
+      const setColumnsSentences = this.generateColumnsSentences(data);
+      query = `UPDATE ${tableName} ${setColumnsSentences} WHERE id = '${id}';`;
       return query;
     case 'delete':
-      return '';
+      query = `DELETE FROM ${tableName} WHERE id = '${id}';`;
+      return query;
     case 'get':
-      return '';
+      const selectColumnsSentences = this.generateColumnsSentences(data);
+      query = `${selectColumnsSentences} FROM ${tableName} WHERE id = '${id}'`;
+      return query;
     default:
       null;
   }
@@ -319,11 +342,36 @@ QueryBuilderProxy.prototype.generateListForQuery = function resolveListQuery(dat
   }, '');
 };
 
-QueryBuilderProxy.prototype.generateSetColumnsSentences = function resolveSetColumnsSentences(
-  dataToInsert,
-  attributesOfInstance
+QueryBuilderProxy.prototype.generateColumnsSentences = function resolveSetColumnsSentences(
+  dataToInsert
 ) {
-  console.log('d:', dataToInsert, attributesOfInstance);
+  const typeOfData = this.checkDataType(dataToInsert);
+  if (typeOfData !== 'array') {
+    const foldedEntries = Object.entries(dataToInsert);
+    const lastItemStringify = JSON.stringify(this.getLastItemOfArray(foldedEntries)[0]);
+    return foldedEntries.reduce((acc, item) => {
+      const itemStringified = JSON.stringify(item);
+      if (itemStringified !== lastItemStringify) {
+        console.log(item);
+        acc += `${item[0]}='${item[1]}', `;
+        return acc;
+      }
+
+      acc += `${item[0]}='${item[1]}'`;
+      return acc;
+    }, 'SET ');
+  }
+
+  const [lastItem] = this.getLastItemOfArray(dataToInsert);
+  return dataToInsert.reduce((acc, item) => {
+    if (item !== lastItem) {
+      acc += `${item}, `;
+      return acc;
+    }
+
+    acc += `${item}`;
+    return acc;
+  }, 'SELECT ');
 };
 
 module.exports = QueryBuilderProxy;
