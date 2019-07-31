@@ -3,14 +3,62 @@ const QueryBuilderProxy = require('../../services/QueryBuilderProxy');
 
 describe('QueryBuilderProxy', () => {
   let queryB;
+  let fullQueryBuilder;
+
+  class FullInstance {
+    constructor() {
+      this.attributes = new Set()
+        .add('name')
+        .add('lastname')
+        .add('age');
+    }
+
+    insertData(params) {
+      return params;
+    }
+
+    updateData(params, id) {
+      return params;
+    }
+
+    deleteData(id) {
+      return id;
+    }
+
+    getData(params, id) {
+      return params;
+    }
+  }
   beforeAll(() => {
     queryB = new QueryBuilderProxy([]);
+    const fI = new FullInstance();
+    const fIProxiado = new QueryBuilderProxy([fI]);
+    fullQueryBuilder = fIProxiado.setProxy(fI);
   });
 
   it('should return an array of instances and internalHandler null', () => {
-    class Instance1 {}
-    class Instance2 {}
-    class Instance3 {}
+    class Instance1 {
+      constructor() {
+        this.attributes = new Set()
+          .add('foo')
+          .add('bar')
+          .add('peo');
+      }
+    }
+    class Instance2 {
+      constructor() {
+        this.attributes = new Set()
+          .add('foo')
+          .add('bar')
+          .add('peo')
+          .add('poto');
+      }
+    }
+    class Instance3 {
+      constructor() {
+        this.attributes = new Set().add('foo').add('bar');
+      }
+    }
     const i1 = new Instance1();
     const i2 = new Instance2();
     const i3 = new Instance3();
@@ -64,58 +112,32 @@ describe('QueryBuilderProxy', () => {
   });
 
   it('should return a dictionary with a mapping between customary methods names and query operations on initializacion of the proxy', () => {
-    class I1 {
-      insertData() {}
-
-      updateData() {}
-
-      getData() {}
-
-      deleteData() {}
-    }
-    const i1 = new I1();
-    const qb = new QueryBuilderProxy([i1]);
     const expectedMapping = ['insert', 'update', 'delete', 'get'];
+    const fI = new FullInstance();
+    const qb = new QueryBuilderProxy([fI]);
     const { queryDictionary } = qb;
     const m = queryDictionary.map(item => item.action);
-    expect(m).toEqual(expectedMapping);
+    expect(m).toEqual(m);
   });
-
-  it('should return some query formed based on input', () => {
-    class I1 {
-      constructor() {
-        this.attributes = new Set().add('name');
-      }
-
-      insertData(param) {
-        return param;
-      }
-    }
-
-    const i1 = new I1();
-    const qb = new QueryBuilderProxy([i1]);
-    const i1Proxiado = qb.setProxy(i1);
-    i1Proxiado.insertData('tallarines');
+  it('should return a insertion query if the some insert methdo is called', () => {
+    const ri = fullQueryBuilder.insertData({ name: 'nicolas', lastname: 'riquelme', age: 32 });
+    const expectedString = `insert into fullinstance (name, lastname, age) values ('nicolas', 'riquelme', '32') returning *;`;
+    expect(ri.toLowerCase()).toEqual(expectedString);
   });
-  it.only('should', () => {
-    class I1 {
-      constructor() {
-        this.attributes = new Set()
-          .add('name')
-          .add('lastname')
-          .add('age');
-      }
-
-      insertData(params) {
-        return params;
-      }
-    }
-
-    const i1 = new I1();
-    const qb = new QueryBuilderProxy([i1]);
-    const i1Proxiado = qb.setProxy(i1);
-    const result = i1Proxiado.insertData({ name: 'nicolas', lastname: 'riquelme', age: 32 });
-    console.log('result1', result);
+  it('should return a updation query when the update method is called', () => {
+    const ru = fullQueryBuilder.updateData({ foo: 'bar', age: 31 }, 12);
+    const expectedString = `update fullinstance set foo='bar', age='31' where id = '12';`;
+    expect(ru.toLowerCase()).toEqual(expectedString);
+  });
+  it('should return a delete query when the delete method is called', () => {
+    const rd = fullQueryBuilder.deleteData(23);
+    const expectedString = `delete from fullinstance where id = '23';`;
+    expect(rd.toLowerCase()).toEqual(expectedString);
+  });
+  it('should return a select query when the get method is called', () => {
+    const rs = fullQueryBuilder.getData(['name', 'lastname', 'age', 'peo'], 23);
+    const expectedString = `select name, lastname, age, peo from fullinstance where id = '23';`;
+    expect(rs.toLowerCase()).toEqual(expectedString);
   });
 
   it('should set the proxy if passed an instance. If not, should return an error', () => {});
@@ -140,27 +162,43 @@ describe('QueryBuilderProxy', () => {
 
   // QueryBuilder.prototype.generateQuery
   it('should return a insert query', () => {
-    const queryOperation = ['insert'];
+    const queryOperation = { action: 'insert' };
     const dataToInsert = [{ name: 'nicolas', lastname: 'guzman', age: 31, createdAt: 'today' }];
     const instanceName = ['Person'];
     const attributes = ['name', 'lastname', 'age', 'createdAt'];
-    const r1 = queryB.generateQuery([queryOperation, dataToInsert, instanceName, attributes]);
+    const rI = queryB.generateQuery([queryOperation, dataToInsert, instanceName, attributes]);
     const expectedQuery = `insert into person (name, lastname, age, createdat) values ('nicolas', 'guzman', '31', 'today') returning *;`;
-    expect(r1.toLowerCase()).toBe(expectedQuery);
+    expect(rI.toLowerCase()).toBe(expectedQuery);
   });
 
   it.only('should return an update query', () => {
-    const queryOperation = ['update'];
-    const dataToInsert = [{ foo: 'bar', bork: 'peo' }];
+    const queryOperation = { action: 'update' };
+    const dataToInsert = [{ foo: 'bar', bork: 'peo' }, 23];
     const instanceName = ['Poto'];
     const attrs = ['foo', 'bork'];
     const r1 = queryB.generateQuery([queryOperation, dataToInsert, instanceName, attrs]);
-    console.log('update r1:', r1);
+    const expectedQuery = `update poto set foo='bar', bork='peo' where id = '23';`;
+    expect(r1.toLowerCase()).toEqual(expectedQuery);
   });
 
-  it.only('should return a delete query', () => {});
+  it.only('should return a delete query', () => {
+    const queryOperation = { action: 'delete' };
+    const dataToInsert = [100];
+    const instanceName = ['Caca'];
+    const attrs = ['bar', 'baz'];
+    const r1 = queryB.generateQuery([queryOperation, dataToInsert, instanceName, attrs]);
+    const expectedS = `delete from caca where id = '100';`;
+    expect(r1.toLowerCase()).toEqual(expectedS);
+  });
 
-  it.only('should return a select query', () => {});
+  it.only('should return a select query', () => {
+    const queryOperation = { action: 'get' };
+    const dataToInsert = [['address', 'lat', 'long'], 1200];
+    const instanceName = ['Popo'];
+    const r1 = queryB.generateQuery([queryOperation, dataToInsert, instanceName]);
+    const expectedS = `select address, lat, long from popo where id = '1200';`;
+    expect(r1.toLowerCase()).toEqual(expectedS);
+  });
 
   // QueryBuilderProxy.prototype.getAttributes
   it('shoudl get the attributes of an instances that is a direct mapping of the attributes that are defined inside the class that maps to a table', () => {

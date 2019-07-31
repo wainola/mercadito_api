@@ -29,6 +29,9 @@ QueryBuilderProxy.prototype.setInternalHandler = function setupInternalHandler()
        * This function receives the method arguments of the proxied instance.
        */
       return function internalCallForProxiedInstance(...args) {
+        if (typeof propName !== 'string') {
+          return;
+        }
         const [calledMethod] = queryDictionary.filter(item => item.methodOriginalName === propName);
 
         const { action } = calledMethod;
@@ -67,6 +70,10 @@ QueryBuilderProxy.prototype.setInternalHandler = function setupInternalHandler()
  */
 QueryBuilderProxy.prototype.setProxy = function setProxyToInstance(target) {
   return new Proxy(target, this.setInternalHandler());
+};
+
+QueryBuilderProxy.prototype.getQueryDictionary = function resolveQueryDictionary() {
+  return this.queryDictionary;
 };
 
 /**
@@ -211,6 +218,7 @@ QueryBuilderProxy.prototype.generateQuery = function resolveQuery([
   instanceName,
   attributes = []
 ]) {
+  console.log('typeOfQuery', typeOfQuery);
   const attributesQuery = this.buildAttributesQuery(attributes);
   const parentAttributes = `(${attributesQuery})`;
   const { action } = typeOfQuery;
@@ -230,6 +238,7 @@ QueryBuilderProxy.prototype.generateQuery = function resolveQuery([
   switch (action) {
     case 'insert':
       query = `INSERT INTO ${tableName} ${parentAttributes} VALUES (${processedDataToInsert}) RETURNING *;`;
+      console.log('query', query);
       return query;
     case 'update':
       const setColumnsSentences = this.generateColumnsSentences(data);
@@ -240,7 +249,7 @@ QueryBuilderProxy.prototype.generateQuery = function resolveQuery([
       return query;
     case 'get':
       const selectColumnsSentences = this.generateColumnsSentences(data);
-      query = `${selectColumnsSentences} FROM ${tableName} WHERE id = '${id}'`;
+      query = `${selectColumnsSentences} FROM ${tableName} WHERE id = '${id}';`;
       return query;
     default:
       null;
@@ -256,15 +265,13 @@ QueryBuilderProxy.prototype.generateQuery = function resolveQuery([
 QueryBuilderProxy.prototype.getAttributes = function resolveAttributesByInstances(
   originalInstance
 ) {
-  const [inst] = originalInstance;
-  const { attributes } = inst;
-  // ATTRIBUTES IS A SET, TO WITH VALUES() METHODS IT RETURNS A ITERATOR
-  const values = attributes.values();
-  const attributesMapping = [];
-  for (const v of values) {
-    attributesMapping.push(v);
+  const hasAttributeProperty = originalInstance.every(item => 'attributes' in item);
+  console.log('hasattrs', hasAttributeProperty);
+  if (hasAttributeProperty) {
+    const attrs = this.getAtrributesFromInstanceCollection(originalInstance);
+    return attrs;
   }
-  return attributesMapping;
+  return null;
 };
 
 /**
@@ -372,6 +379,17 @@ QueryBuilderProxy.prototype.generateColumnsSentences = function resolveSetColumn
     acc += `${item}`;
     return acc;
   }, 'SELECT ');
+};
+
+QueryBuilderProxy.prototype.getAtrributesFromInstanceCollection = function resolveAttributesFromInstanceCollection(
+  instances
+) {
+  if (instances.length > 1) {
+    return instances.map(item => [...item.attributes]);
+  }
+  const [inst] = instances;
+  const { attributes } = inst;
+  return [...attributes];
 };
 
 module.exports = QueryBuilderProxy;
