@@ -1,6 +1,11 @@
 const util = require('util');
 const QueryBuilderProxy = require('../../services/QueryBuilderProxy');
 
+const Client = require('./MockedModels/ClientModel');
+const Product = require('./MockedModels/ProductModel');
+const Address = require('./MockedModels/AddressModel');
+const Stock = require('./MockedModels/StockModel');
+
 describe('QueryBuilderProxy', () => {
   let queryB;
   let fullQueryBuilder;
@@ -117,7 +122,7 @@ describe('QueryBuilderProxy', () => {
     const qb = new QueryBuilderProxy([fI]);
     const { queryDictionary } = qb;
     const m = queryDictionary.map(item => item.action);
-    expect(m).toEqual(m);
+    expect(m).toEqual(expectedMapping);
   });
   it('should return a insertion query if the some insert methdo is called', () => {
     const ri = fullQueryBuilder.insertData({ name: 'nicolas', lastname: 'riquelme', age: 32 });
@@ -140,26 +145,6 @@ describe('QueryBuilderProxy', () => {
     expect(rs.toLowerCase()).toEqual(expectedString);
   });
 
-  it('should set the proxy if passed an instance. If not, should return an error', () => {});
-
-  it('should get the prototype of an instance an return it', () => {});
-
-  it('should return the internal properties descriptors of an prototype if an instancen prototype is passed', () => {});
-
-  it('should return the entries values of a prototype', () => {});
-
-  it('should return the names of the methods of an instance', () => {});
-
-  it('should filter the names of the methods of an instance', () => {});
-
-  it('should set the instance and methods and return an object describing this properties', () => {});
-
-  it('should set the query actions if passed the methods of an instance', () => {});
-
-  it('should return the methods names sorted by a predetermined order. This methods should have corresponden with some fundamental query operations', () => {});
-
-  it('should return one part of the methods name that has correspondence with some fundamental query operation', () => {});
-
   // QueryBuilder.prototype.generateQuery
   it('should return a insert query', () => {
     const queryOperation = { action: 'insert' };
@@ -171,7 +156,7 @@ describe('QueryBuilderProxy', () => {
     expect(rI.toLowerCase()).toBe(expectedQuery);
   });
 
-  it.only('should return an update query', () => {
+  it('should return an update query', () => {
     const queryOperation = { action: 'update' };
     const dataToInsert = [{ foo: 'bar', bork: 'peo' }, 23];
     const instanceName = ['Poto'];
@@ -181,7 +166,7 @@ describe('QueryBuilderProxy', () => {
     expect(r1.toLowerCase()).toEqual(expectedQuery);
   });
 
-  it.only('should return a delete query', () => {
+  it('should return a delete query', () => {
     const queryOperation = { action: 'delete' };
     const dataToInsert = [100];
     const instanceName = ['Caca'];
@@ -191,7 +176,7 @@ describe('QueryBuilderProxy', () => {
     expect(r1.toLowerCase()).toEqual(expectedS);
   });
 
-  it.only('should return a select query', () => {
+  it('should return a select query', () => {
     const queryOperation = { action: 'get' };
     const dataToInsert = [['address', 'lat', 'long'], 1200];
     const instanceName = ['Popo'];
@@ -263,5 +248,34 @@ describe('QueryBuilderProxy', () => {
     const e2 = `'poo', 'bee', 'bork'`;
     expect(r1).toEqual(e1);
     expect(r2).toEqual(e2);
+  });
+});
+
+describe.only('QueryBuilderProxy various instances', () => {
+  let fullQueryBuilder;
+  let clientProxied;
+  let productProxied;
+  let addressProxied;
+  let stockProxied;
+  const client = new Client();
+  const product = new Product();
+  const address = new Address();
+  const stock = new Stock();
+
+  beforeAll(() => {
+    fullQueryBuilder = new QueryBuilderProxy([client, product, address, stock]);
+  });
+  it('should handle various instances with different properties', () => {
+    clientProxied = fullQueryBuilder.setProxy(client);
+    console.log(
+      clientProxied.insertData({
+        id: 1,
+        name: 'nicolas',
+        lastname: 'riquelme',
+        email: 'nicolas@mail.com',
+        age: 31,
+        addressId: '23'
+      })
+    );
   });
 });

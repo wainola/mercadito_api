@@ -238,7 +238,6 @@ QueryBuilderProxy.prototype.generateQuery = function resolveQuery([
   switch (action) {
     case 'insert':
       query = `INSERT INTO ${tableName} ${parentAttributes} VALUES (${processedDataToInsert}) RETURNING *;`;
-      console.log('query', query);
       return query;
     case 'update':
       const setColumnsSentences = this.generateColumnsSentences(data);
@@ -266,7 +265,7 @@ QueryBuilderProxy.prototype.getAttributes = function resolveAttributesByInstance
   originalInstance
 ) {
   const hasAttributeProperty = originalInstance.every(item => 'attributes' in item);
-  console.log('hasattrs', hasAttributeProperty);
+  // console.log('hasattrs', hasAttributeProperty);
   if (hasAttributeProperty) {
     const attrs = this.getAtrributesFromInstanceCollection(originalInstance);
     return attrs;
