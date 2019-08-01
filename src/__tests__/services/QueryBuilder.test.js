@@ -124,7 +124,7 @@ describe('QueryBuilderProxy', () => {
     const m = queryDictionary.map(item => item.action);
     expect(m).toEqual(expectedMapping);
   });
-  it('should return a insertion query if the some insert methdo is called', () => {
+  it('should return a insertion query if the some insert method is called', () => {
     const ri = fullQueryBuilder.insertData({ name: 'nicolas', lastname: 'riquelme', age: 32 });
     const expectedString = `insert into fullinstance (name, lastname, age) values ('nicolas', 'riquelme', '32') returning *;`;
     expect(ri.toLowerCase()).toEqual(expectedString);
@@ -186,7 +186,7 @@ describe('QueryBuilderProxy', () => {
   });
 
   // QueryBuilderProxy.prototype.getAttributes
-  it('shoudl get the attributes of an instances that is a direct mapping of the attributes that are defined inside the class that maps to a table', () => {
+  it('should get the attributes of an instances that is a direct mapping of the attributes that are defined inside the class that maps to a table', () => {
     class I1 {
       constructor() {
         this.attributes = new Set()
@@ -198,7 +198,7 @@ describe('QueryBuilderProxy', () => {
     }
     const i1 = new I1();
     const r1 = queryB.getAttributes([i1]);
-    const e1 = ['peo', 'poto', 'caca', 'popo'];
+    const e1 = [{ instanceName: 'I1', attributes: ['peo', 'poto', 'caca', 'popo'] }];
     expect(r1).toEqual(e1);
   });
 
@@ -251,7 +251,7 @@ describe('QueryBuilderProxy', () => {
   });
 });
 
-describe.only('QueryBuilderProxy various instances', () => {
+describe('QueryBuilderProxy various instances', () => {
   let fullQueryBuilder;
   let clientProxied;
   let productProxied;
@@ -265,17 +265,38 @@ describe.only('QueryBuilderProxy various instances', () => {
   beforeAll(() => {
     fullQueryBuilder = new QueryBuilderProxy([client, product, address, stock]);
   });
-  it('should handle various instances with different properties', () => {
+  it('should return a client insertion query', () => {
     clientProxied = fullQueryBuilder.setProxy(client);
-    console.log(
-      clientProxied.insertData({
-        id: 1,
-        name: 'nicolas',
-        lastname: 'riquelme',
-        email: 'nicolas@mail.com',
-        age: 31,
-        addressId: '23'
-      })
+    const r = clientProxied.insertData({
+      id: 1,
+      name: 'francisco',
+      lastname: 'gonzalez',
+      email: 'francisco@gmail.com',
+      age: 32,
+      addressId: 34
+    });
+    const eps = `insert into client (id, name, lastname, email, age, addressid) values ('1', 'francisco', 'gonzalez', 'francisco@gmail.com', '32', '34') returning *;`;
+    expect(r.toLowerCase()).toEqual(eps);
+  });
+  it('should return a product update query', () => {
+    productProxied = fullQueryBuilder.setProxy(product);
+    const r = productProxied.updateData(
+      { name: 'tallarines', description: 'some lorem ipsum' },
+      12
     );
+    const eps = `update product set name='tallarines', description='some lorem ipsum' where id = '12';`;
+    expect(r.toLowerCase()).toEqual(eps);
+  });
+  it('should return a address selection query', () => {
+    addressProxied = fullQueryBuilder.setProxy(address);
+    const r = addressProxied.getData(['id', 'address', 'lat', 'lng'], 23);
+    const eps = `select id, address, lat, lng from address where id = '23';`;
+    expect(r.toLowerCase()).toEqual(eps);
+  });
+  it('should return a deletion query on stock model', () => {
+    stockProxied = fullQueryBuilder.setProxy(stock);
+    const r = stockProxied.deleteData(34);
+    const eps = `delete from stock where id = '34';`;
+    expect(r.toLowerCase()).toEqual(eps);
   });
 });

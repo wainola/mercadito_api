@@ -6,7 +6,7 @@ class Client {
       .add('lastname')
       .add('email')
       .add('age')
-      .add('addresId');
+      .add('addressId');
   }
 
   insertData(params) {

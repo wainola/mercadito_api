@@ -21,6 +21,7 @@ function QueryBuilderProxy(instances = null) {
  */
 QueryBuilderProxy.prototype.setInternalHandler = function setupInternalHandler() {
   const { queryDictionary, generateQuery, instancesAndMethods, attributes } = this;
+  // console.log('queryDic', instancesAndMethods);
   const self = this;
 
   const internalHandlerObject = {
@@ -40,13 +41,28 @@ QueryBuilderProxy.prototype.setInternalHandler = function setupInternalHandler()
           .map(item => item.instanceName)
           .filter(item => item === target.constructor.name);
 
+        // console.log('instance', attributes);
+        const [attributesToPass] = attributes
+          .filter(item => item.instanceName === instancesName[0])
+          .map(item => item.attributes);
+
         let getQuery;
         switch (action) {
           case 'insert':
-            getQuery = generateQuery.call(self, [calledMethod, args, instancesName, attributes]);
+            getQuery = generateQuery.call(self, [
+              calledMethod,
+              args,
+              instancesName,
+              attributesToPass
+            ]);
             return target[propName](getQuery);
           case 'update':
-            getQuery = generateQuery.call(self, [calledMethod, args, instancesName, attributes]);
+            getQuery = generateQuery.call(self, [
+              calledMethod,
+              args,
+              instancesName,
+              attributesToPass
+            ]);
             return target[propName](getQuery);
           case 'delete':
             getQuery = generateQuery.call(self, [calledMethod, args, instancesName]);
@@ -218,7 +234,7 @@ QueryBuilderProxy.prototype.generateQuery = function resolveQuery([
   instanceName,
   attributes = []
 ]) {
-  console.log('typeOfQuery', typeOfQuery);
+  // console.log('typeOfQuery', attributes);
   const attributesQuery = this.buildAttributesQuery(attributes);
   const parentAttributes = `(${attributesQuery})`;
   const { action } = typeOfQuery;
@@ -265,7 +281,7 @@ QueryBuilderProxy.prototype.getAttributes = function resolveAttributesByInstance
   originalInstance
 ) {
   const hasAttributeProperty = originalInstance.every(item => 'attributes' in item);
-  // console.log('hasattrs', hasAttributeProperty);
+  // console.log('hasattrs', originalInstance);
   if (hasAttributeProperty) {
     const attrs = this.getAtrributesFromInstanceCollection(originalInstance);
     return attrs;
@@ -277,6 +293,7 @@ QueryBuilderProxy.prototype.getAttributes = function resolveAttributesByInstance
  * Return a string with the part of the query related to the attributes describe to pass on a DDL sentence
  */
 QueryBuilderProxy.prototype.buildAttributesQuery = function resolveAttributesString(attributes) {
+  // console.log('ATTRIS:', attributes);
   return this.generateListForQuery(attributes, 'columns');
 };
 
@@ -337,6 +354,7 @@ QueryBuilderProxy.prototype.getLastItemOfArray = function resolveLastItem(arr) {
  * TODO: check the string construction if passed a number or other datatype that is not a string
  */
 QueryBuilderProxy.prototype.generateListForQuery = function resolveListQuery(data, context) {
+  // console.log('data, context', data, context);
   const [lastItem] = this.getLastItemOfArray(data);
   return data.reduce((acc, item) => {
     if (item === lastItem) {
@@ -358,7 +376,7 @@ QueryBuilderProxy.prototype.generateColumnsSentences = function resolveSetColumn
     return foldedEntries.reduce((acc, item) => {
       const itemStringified = JSON.stringify(item);
       if (itemStringified !== lastItemStringify) {
-        console.log(item);
+        // console.log(item);
         acc += `${item[0]}='${item[1]}', `;
         return acc;
       }
@@ -383,12 +401,16 @@ QueryBuilderProxy.prototype.generateColumnsSentences = function resolveSetColumn
 QueryBuilderProxy.prototype.getAtrributesFromInstanceCollection = function resolveAttributesFromInstanceCollection(
   instances
 ) {
+  // console.log('INST', instances[0]);
   if (instances.length > 1) {
-    return instances.map(item => [...item.attributes]);
+    return instances.map(item => ({
+      instanceName: item.constructor.name,
+      attributes: [...item.attributes]
+    }));
   }
   const [inst] = instances;
   const { attributes } = inst;
-  return [...attributes];
+  return [{ instanceName: inst.constructor.name, attributes: [...attributes] }];
 };
 
 module.exports = QueryBuilderProxy;
