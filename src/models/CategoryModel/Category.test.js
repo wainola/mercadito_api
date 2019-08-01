@@ -1,54 +1,31 @@
 const Category = require('./index');
+const QueryBuilderProxy = require('../../services/QueryBuilderProxy');
 
-function ProxiedModel(target) {
-  const internalHandler = {
-    get(target, propName) {
-      return async function internalCallProxiedInstance(...args) {
-        let type;
-        switch (propName) {
-          case 'insertCategory':
-            type = 'insert';
-            const [data] = args;
-            return target.buildQuery(type, data);
-          case 'updateCategory':
-            type = 'update';
-            const [categoryUpdate, idUpdate] = args;
-            return target.buildQuery(type, categoryUpdate, idUpdate);
-          case 'deleteCategory':
-            type = 'delete';
-            const [idDelete] = args;
-            return target.buildQuery(type, null, idDelete);
-          case 'select':
-            return target.buildQuery();
-          default:
-            return null;
-        }
-      };
-    }
-  };
-
-  return new Proxy(target, internalHandler);
-}
-
-describe('Category Model unit test', () => {
+describe.only('Category Model unit test', () => {
   let proxiedCategoryModel;
+  let queryBuilderProxy;
+  let proxiedCategory;
   beforeAll(() => {
     const categoryModel = new Category();
-    proxiedCategoryModel = ProxiedModel(categoryModel);
+    queryBuilderProxy = new QueryBuilderProxy([categoryModel]);
+    proxiedCategory = queryBuilderProxy.setProxy(categoryModel);
   });
   it('should return an insertion query if provided a category to the insertMehod', async () => {
-    const expectedIncludedString = 'insert';
-    const r = await proxiedCategoryModel.insertCategory('tallarines');
-    expect(r.toLowerCase().includes(expectedIncludedString)).toBe(true);
+    const eps = `insert into category (category_name) values ('abarrotes') returning *;`;
+    const r = await proxiedCategory.insertCategory({ category_name: 'abarrotes' });
+    expect(r.toLowerCase()).toEqual(eps);
   });
   it('should return an updation query if provided a category and a id to the updateCategory method', async () => {
-    const expectedIncludedString = 'update';
-    const r = await proxiedCategoryModel.updateCategory('fideos', '23');
-    expect(r.toLowerCase().includes(expectedIncludedString)).toBe(true);
+    const eps = `update category set category_name='verduras', createdat='foo' where id = '23';`;
+    const r = await proxiedCategory.updateCategory(
+      { category_name: 'verduras', createdat: 'foo' },
+      23
+    );
+    expect(r.toLowerCase()).toEqual(eps);
   });
   it('should return an updation query if provided a id to the deleteCategory method. This query should include deteleAt word', async () => {
-    const expectedIncludedString = 'deletedAt';
-    const r = await proxiedCategoryModel.deleteCategory('100');
-    expect(r.includes(expectedIncludedString)).toBe(true);
+    const eps = `delete from category where id = '100';`;
+    const r = await proxiedCategory.deleteCategory('100');
+    expect(r.toLowerCase()).toEqual(eps);
   });
 });

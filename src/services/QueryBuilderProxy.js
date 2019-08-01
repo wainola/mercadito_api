@@ -5,6 +5,7 @@
  */
 
 function QueryBuilderProxy(instances = null) {
+  console.log('instance', instances);
   if (!instances.length) {
     return;
   }
@@ -21,7 +22,7 @@ function QueryBuilderProxy(instances = null) {
  */
 QueryBuilderProxy.prototype.setInternalHandler = function setupInternalHandler() {
   const { queryDictionary, generateQuery, instancesAndMethods, attributes } = this;
-  // console.log('queryDic', instancesAndMethods);
+  console.log('queryDic', queryDictionary, instancesAndMethods, attributes);
   const self = this;
 
   const internalHandlerObject = {
@@ -41,7 +42,7 @@ QueryBuilderProxy.prototype.setInternalHandler = function setupInternalHandler()
           .map(item => item.instanceName)
           .filter(item => item === target.constructor.name);
 
-        // console.log('instance', attributes);
+        console.log('instance', attributes);
         const [attributesToPass] = attributes
           .filter(item => item.instanceName === instancesName[0])
           .map(item => item.attributes);
@@ -235,7 +236,10 @@ QueryBuilderProxy.prototype.generateQuery = function resolveQuery([
   attributes = []
 ]) {
   // console.log('typeOfQuery', attributes);
-  const attributesQuery = this.buildAttributesQuery(attributes);
+  const [dataPassed] = dataToInsert;
+  const dataKeys = Object.keys(dataPassed);
+  const attributesQuery = this.buildAttributesQuery(attributes, dataKeys);
+  console.log('attributes', attributesQuery, dataKeys);
   const parentAttributes = `(${attributesQuery})`;
   const { action } = typeOfQuery;
   const [tableName] = instanceName;
@@ -292,9 +296,21 @@ QueryBuilderProxy.prototype.getAttributes = function resolveAttributesByInstance
 /**
  * Return a string with the part of the query related to the attributes describe to pass on a DDL sentence
  */
-QueryBuilderProxy.prototype.buildAttributesQuery = function resolveAttributesString(attributes) {
-  // console.log('ATTRIS:', attributes);
-  return this.generateListForQuery(attributes, 'columns');
+QueryBuilderProxy.prototype.buildAttributesQuery = function resolveAttributesString(
+  attributes,
+  keysOfDataPassed
+) {
+  const attributesFiltered = attributes.reduce((acc, item) => {
+    const index = keysOfDataPassed.indexOf(item);
+    const elem = keysOfDataPassed[index];
+    if (elem === item) {
+      acc.push(elem);
+    }
+    return acc;
+  }, []);
+
+  // console.log('ATRS:', attributesFiltered);
+  return this.generateListForQuery(attributesFiltered, 'columns');
 };
 
 /**
@@ -307,6 +323,7 @@ QueryBuilderProxy.prototype.buildAttributesQuery = function resolveAttributesStr
  * return string string in the form of 'something', 'somewhere', ...
  */
 QueryBuilderProxy.prototype.processDataByInspection = function resolveData(data) {
+  console.log('DATA BY INSPECTION', data);
   const dataType = this.checkDataType(data);
   if (dataType !== 'object') {
     return this.generateListForQuery(data, 'values');
@@ -336,6 +353,7 @@ QueryBuilderProxy.prototype.checkDataType = function resolveDataType(data) {
  * @returns [item] the last item of the passed array
  */
 QueryBuilderProxy.prototype.getLastItemOfArray = function resolveLastItem(arr) {
+  console.log('arr:', arr);
   return arr.filter((_, idx, self) => idx === self.length - 1);
 };
 
