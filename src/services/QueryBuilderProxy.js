@@ -18,6 +18,22 @@ function QueryBuilderProxy(instances = null) {
 }
 
 /**
+ * Expect an array of instances
+ */
+QueryBuilderProxy.prototype.setInstance = function resolveInstanceSetup(instances) {
+  try {
+    if (!instances.length) {
+      throw new Error('No instances passed');
+    }
+
+    this.instances = instances;
+    this.internalHandler = null;
+  } catch (error) {
+    return error;
+  }
+};
+
+/**
  * Return a handler object with a get trap to intersect the property accesor of an instance
  */
 QueryBuilderProxy.prototype.setInternalHandler = function setupInternalHandler() {
@@ -300,6 +316,7 @@ QueryBuilderProxy.prototype.buildAttributesQuery = function resolveAttributesStr
   attributes,
   keysOfDataPassed
 ) {
+  console.log('attrs and keys::', attributes, keysOfDataPassed);
   const attributesFiltered = attributes.reduce((acc, item) => {
     const index = keysOfDataPassed.indexOf(item);
     const elem = keysOfDataPassed[index];
@@ -323,7 +340,7 @@ QueryBuilderProxy.prototype.buildAttributesQuery = function resolveAttributesStr
  * return string string in the form of 'something', 'somewhere', ...
  */
 QueryBuilderProxy.prototype.processDataByInspection = function resolveData(data) {
-  console.log('DATA BY INSPECTION', data);
+  // console.log('DATA BY INSPECTION', data);
   const dataType = this.checkDataType(data);
   if (dataType !== 'object') {
     return this.generateListForQuery(data, 'values');
@@ -353,7 +370,7 @@ QueryBuilderProxy.prototype.checkDataType = function resolveDataType(data) {
  * @returns [item] the last item of the passed array
  */
 QueryBuilderProxy.prototype.getLastItemOfArray = function resolveLastItem(arr) {
-  console.log('arr:', arr);
+  // console.log('arr:', arr);
   return arr.filter((_, idx, self) => idx === self.length - 1);
 };
 

@@ -1,8 +1,9 @@
 const Database = require('../index');
+const QueryBuilderProxy = require('../../services/QueryBuilderProxy');
 
 class Category extends Database {
-  constructor() {
-    super();
+  constructor(client) {
+    super(client);
     this.attributes = new Set()
       .add('id')
       .add('category_name')
@@ -44,4 +45,8 @@ class Category extends Database {
   }
 }
 
-module.exports = Category;
+const CategoryDefault = Category;
+
+module.exports = {
+  CategoryDefault
+};

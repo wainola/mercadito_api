@@ -19,4 +19,6 @@ router.post('/category', JSONValidatorMiddleware, categoryHandler.postCategory);
 router.patch('/category', JSONValidatorMiddleware, categoryHandler.updateCategory);
 router.delete('/category', JSONValidatorMiddleware, categoryHandler.deleteCategory);
 
+// STOCK
+
 module.exports = router;

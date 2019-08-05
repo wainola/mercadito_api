@@ -18,7 +18,7 @@ class Response {
   }
 }
 
-describe('CategoryHandler', () => {
+describe('CategoryHandler unit test', () => {
   let res;
   let categoryHandler;
   let postCategorySpy;
@@ -28,13 +28,17 @@ describe('CategoryHandler', () => {
   let postCategoryBody;
   let updateCategoryBody;
   let deleteCategoryBody;
+  let getCategoryBody;
   beforeAll(() => {
     res = new Response();
-    categoryHandler = new CategoryHandler();
+    const mockClient = {
+      query: async param => param
+    };
+    categoryHandler = new CategoryHandler(mockClient);
     postCategorySpy = jest.spyOn(categoryHandler, 'postCategory');
     updateCategorySpy = jest.spyOn(categoryHandler, 'updateCategory');
     deleteCategorySpy = jest.spyOn(categoryHandler, 'deleteCategory');
-    getCategoriesSpy = jest.spyOn(categoryHandler, 'getCategories');
+    getCategoriesSpy = jest.spyOn(categoryHandler, 'getCategory');
 
     postCategoryBody = {
       body: { category: { category_name: 'some name' } }
@@ -44,6 +48,14 @@ describe('CategoryHandler', () => {
     };
     deleteCategoryBody = {
       body: { category: { id: '1' } }
+    };
+    getCategoryBody = {
+      body: {
+        category: {
+          id: 1,
+          params: ['category_name', 'createdat']
+        }
+      }
     };
   });
 
@@ -60,7 +72,7 @@ describe('CategoryHandler', () => {
     expect(deleteCategorySpy).toHaveBeenCalled();
   });
   it('should call the getCategories method', async () => {
-    await categoryHandler.getCategories({}, res);
+    await categoryHandler.getCategory(getCategoryBody, res);
     expect(getCategoriesSpy).toHaveBeenCalled();
   });
   it('should return 200 when passed the body', async () => {

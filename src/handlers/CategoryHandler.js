@@ -32,8 +32,11 @@ class CategoryHandler extends Base {
     return response.status(200).send({ data: categoryDeleted });
   }
 
-  async getCategories(_, response) {
-    const categories = await this.categoryModel.getCategories();
+  async getCategory({ body }, response) {
+    const {
+      category: { id, params }
+    } = body;
+    const categories = await this.categoryModel.getCategory(params, id);
     return response.status(200).send({ data: categories });
   }
 }

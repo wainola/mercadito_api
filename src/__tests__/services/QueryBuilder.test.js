@@ -205,7 +205,8 @@ describe('QueryBuilderProxy', () => {
   // QueryBuilderProxy.prototype.buildAttributeQuery
   it('should return the attributes part of an query', () => {
     const columns = ['name', 'lastname', 'peo'];
-    const r1 = queryB.buildAttributesQuery(columns);
+    const dataKeys = ['name', 'lastname', 'peo'];
+    const r1 = queryB.buildAttributesQuery(columns, dataKeys);
     const e1 = 'name, lastname, peo';
     expect(r1).toEqual(e1);
   });
