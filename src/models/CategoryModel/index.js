@@ -15,28 +15,32 @@ class Category extends Database {
    * POST CATEGORY
    */
   async insertCategory(category) {
-    return category;
+    const queryTosend = category;
+    return this.execQuery(queryTosend);
   }
 
   /**
    * UPDATE CATEGORY
    */
   async updateCategory(category, id) {
-    return category;
+    const queryToSend = category;
+    return this.execQuery(queryToSend);
   }
 
   /**
    * DELETE CATEGORY
    */
   async deleteCategory(id) {
-    return id;
+    const queryToSend = id;
+    return this.execQuery(queryToSend);
   }
 
   /**
    * GET CATEGORIES
    */
   async getCategories(params, id) {
-    return params;
+    const queryToSend = params;
+    return this.execQuery(queryToSend);
   }
 }
 

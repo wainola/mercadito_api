@@ -1,12 +1,13 @@
 const Category = require('./index');
 const QueryBuilderProxy = require('../../services/QueryBuilderProxy');
+const ProxiedInstance = require('../../testsUtils/ProxyInstance');
 
-describe.only('Category Model unit test', () => {
-  let proxiedCategoryModel;
+describe('Category Model unit test', () => {
   let queryBuilderProxy;
   let proxiedCategory;
   beforeAll(() => {
-    const categoryModel = new Category();
+    const ProxiedCategory = ProxiedInstance(Category);
+    const categoryModel = new ProxiedCategory();
     queryBuilderProxy = new QueryBuilderProxy([categoryModel]);
     proxiedCategory = queryBuilderProxy.setProxy(categoryModel);
   });
