@@ -1,22 +1,46 @@
 const Database = require('../index');
 
-class ProductModel extends Database {
-  async buildQuery(type, data = null, id = null) {
-    switch (type) {
-    }
+class Product extends Database {
+  constructor() {
+    super();
+    this.attributes = new Set()
+      .add('id')
+      .add('fk_category_id')
+      .add('fk_stock_id')
+      .add('product_name')
+      .add('product_price')
+      .add('product_description')
+      .add('createdat')
+      .add('updatedat')
+      .add('deletedat');
   }
 
-  async insertProduct(attributes) {
-    return this.buildQuery('insert', attributes).then(async query => this.execQuery(query));
+  /**
+   *
+   * Product insertion need the fk for the category and the id of the stock
+   * to enable the table relationship.
+   */
+  async insertProduct(params) {
+    const queryToSend = params;
+    return this.execQuery(queryToSend);
   }
 
-  async updateProduct() {}
+  async updateProduct(params, id) {
+    const queryToSend = params;
+    return this.execQuery(queryToSend);
+  }
 
-  async deleteProduct() {}
+  async deleteProduct(id) {
+    const queryToSend = id;
+    return this.execQuery(queryToSend);
+  }
 
-  async getProduct() {}
+  async getProduct(params, id) {
+    const queryToSend = params;
+    return this.execQuery(queryToSend);
+  }
 
   async getAllProducts() {}
 }
 
-module.exports = ProductModel;
+module.exports = Product;
