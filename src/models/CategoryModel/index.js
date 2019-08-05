@@ -38,7 +38,7 @@ class Category extends Database {
   /**
    * GET CATEGORIES
    */
-  async getCategories(params, id) {
+  async getCategory(params, id) {
     const queryToSend = params;
     return this.execQuery(queryToSend);
   }

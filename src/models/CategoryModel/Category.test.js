@@ -24,9 +24,14 @@ describe('Category Model unit test', () => {
     );
     expect(r.toLowerCase()).toEqual(eps);
   });
-  it('should return an updation query if provided a id to the deleteCategory method. This query should include deteleAt word', async () => {
+  it('should return an deletion query if provided a id to the deleteCategory method. This query should include deteleAt word', async () => {
     const eps = `delete from category where id = '100';`;
     const r = await proxiedCategory.deleteCategory('100');
+    expect(r.toLowerCase()).toEqual(eps);
+  });
+  it('should return selection query if provided with the params and the if on the getCategory method', async () => {
+    const eps = `select category_name, createdat from category where id = '11';`;
+    const r = await proxiedCategory.getCategory(['category_name', 'createdat'], 11);
     expect(r.toLowerCase()).toEqual(eps);
   });
 });
