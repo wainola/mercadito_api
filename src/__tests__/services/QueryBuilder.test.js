@@ -35,7 +35,7 @@ describe('QueryBuilderProxy', () => {
     }
   }
   beforeAll(() => {
-    queryB = new QueryBuilderProxy([]);
+    queryB = new QueryBuilderProxy();
     const fI = new FullInstance();
     const fIProxiado = new QueryBuilderProxy([fI]);
     fullQueryBuilder = fIProxiado.setProxy(fI);
@@ -68,6 +68,7 @@ describe('QueryBuilderProxy', () => {
     const i2 = new Instance2();
     const i3 = new Instance3();
     const qb = new QueryBuilderProxy([i1, i2, i3]);
+    console.log('QB::::', qb);
     expect(Array.isArray(qb.instances)).toBe(true);
     expect(qb.instances).toHaveLength(3);
     expect(qb.internalHandler).toBe(null);
@@ -76,7 +77,7 @@ describe('QueryBuilderProxy', () => {
   it('should return a proxy instance', () => {
     class Target1 {}
     const t1 = new Target1();
-    const qb = new QueryBuilderProxy([]);
+    const qb = new QueryBuilderProxy();
     const proxiedT1 = qb.setProxy(t1);
     expect(util.types.isProxy(proxiedT1)).toBe(true);
   });
@@ -299,5 +300,39 @@ describe('QueryBuilderProxy various instances', () => {
     const r = stockProxied.deleteData(34);
     const eps = `delete from stock where id = '34';`;
     expect(r.toLowerCase()).toEqual(eps);
+  });
+});
+
+describe('another wea', () => {
+  it('testing the new query method', () => {
+    class I1 {
+      constructor() {
+        this.attributes = new Set().add('foo_1').add('bar_1');
+      }
+
+      updateData() {}
+
+      deleteData() {}
+    }
+    class I2 {
+      constructor() {
+        this.attributes = new Set().add('foo_2').add('bar_2');
+      }
+
+      insertData() {}
+
+      updateData() {}
+
+      deleteData() {}
+    }
+
+    const i1 = new I1();
+    const i2 = new I2();
+    const qb = new QueryBuilderProxy([i1, i2]);
+    // console.log('qb:::', qb);
+  });
+  it('testing qb but without references to instances', () => {
+    const qb = new QueryBuilderProxy();
+    // console.log('qb:', qb);
   });
 });

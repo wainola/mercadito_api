@@ -6,7 +6,13 @@
 
 function QueryBuilderProxy(instances = null) {
   console.log('instance', instances);
-  if (!instances.length) {
+  if (!instances) {
+    // console.log('NO PUEDE ENTRAR ACA');
+    this.instance = null;
+    this.internalHandler = null;
+    this.instancesAndMethods = null;
+    this.attributes = null;
+    this.queryDictionary = null;
     return;
   }
   this.instances = instances;
@@ -28,6 +34,10 @@ QueryBuilderProxy.prototype.setInstance = function resolveInstanceSetup(instance
 
     this.instances = instances;
     this.internalHandler = null;
+    this.instancesAndMethods = this.setInstancesAndMethods(instances);
+    this.attributes = this.getAttributes(this.instances);
+    this.queryDictionary = this.setQueryActions(this.instancesAndMethods);
+    this.setInternalHandler = this.setInternalHandler.bind(this);
   } catch (error) {
     return error;
   }
@@ -58,7 +68,7 @@ QueryBuilderProxy.prototype.setInternalHandler = function setupInternalHandler()
           .map(item => item.instanceName)
           .filter(item => item === target.constructor.name);
 
-        console.log('instance', attributes);
+        // console.log('instance', attributes);
         const [attributesToPass] = attributes
           .filter(item => item.instanceName === instancesName[0])
           .map(item => item.attributes);
@@ -93,7 +103,6 @@ QueryBuilderProxy.prototype.setInternalHandler = function setupInternalHandler()
       };
     }
   };
-
   this.internalHandler = internalHandlerObject;
   return this.internalHandler;
 };
@@ -102,6 +111,7 @@ QueryBuilderProxy.prototype.setInternalHandler = function setupInternalHandler()
  * Returns a Proxy of the instance passed
  */
 QueryBuilderProxy.prototype.setProxy = function setProxyToInstance(target) {
+  const yy = new Proxy(target, this.setInternalHandler());
   return new Proxy(target, this.setInternalHandler());
 };
 
