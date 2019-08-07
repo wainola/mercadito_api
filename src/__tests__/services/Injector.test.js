@@ -36,7 +36,7 @@ describe('Injector => dependency injection of proxied models', () => {
     const proxiedInstance = Injector.proxyInstance(key);
     expect(util.types.isProxy(proxiedInstance)).toBe(true);
   });
-  it.only('should resolve various proxied dependencies', () => {
+  it('should resolve various proxied dependencies', () => {
     const address = new Address();
     const client = new Client();
     const product = new Product();

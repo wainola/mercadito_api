@@ -380,7 +380,7 @@ QueryBuilderProxy.prototype.checkDataType = function resolveDataType(data) {
  * @returns [item] the last item of the passed array
  */
 QueryBuilderProxy.prototype.getLastItemOfArray = function resolveLastItem(arr) {
-  // console.log('arr:', arr);
+  console.log('arr:', arr);
   return arr.filter((_, idx, self) => idx === self.length - 1);
 };
 

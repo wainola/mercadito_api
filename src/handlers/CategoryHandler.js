@@ -1,26 +1,27 @@
 const Base = require('./BaseHandler');
 const CategoryModel = require('../models/CategoryModel');
+const Injector = require('../services/Injector');
 
 class CategoryHandler extends Base {
   constructor(client = null) {
     super();
-    this.categoryModel = new CategoryModel(client);
+    this.categoryKey = Injector.setDependency(new CategoryModel(client));
+    this.categoryModel = Injector.proxyInstance(this.categoryKey);
     this.postCategory = this.postCategory.bind(this);
   }
 
   async postCategory({ body }, response) {
-    const {
-      category: { category_name: category }
-    } = body;
+    const { category } = body;
     const categoryInserted = await this.categoryModel.insertCategory(category);
     return response.status(200).send({ data: categoryInserted });
   }
 
   async updateCategory({ body }, response) {
     const {
-      category: { id, category_name: category }
+      category: { id, category_name }
     } = body;
-    const categoryUpdated = await this.categoryModel.updateCategory(id, category);
+    const updatedCategory = { category_name };
+    const categoryUpdated = await this.categoryModel.updateCategory(updatedCategory, id);
     return response.status(200).send({ data: categoryUpdated });
   }
 
@@ -34,7 +35,7 @@ class CategoryHandler extends Base {
 
   async getCategory({ body }, response) {
     const {
-      category: { id, params }
+      category: { params, id }
     } = body;
     const categories = await this.categoryModel.getCategory(params, id);
     return response.status(200).send({ data: categories });
