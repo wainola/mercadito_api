@@ -15,6 +15,7 @@ class Category extends Database {
    * POST CATEGORY
    */
   async insertCategory(category) {
+    console.log('PARAMS');
     const queryTosend = category;
     return this.execQuery(queryTosend);
   }
