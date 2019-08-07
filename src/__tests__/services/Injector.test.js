@@ -36,5 +36,20 @@ describe('Injector => dependency injection of proxied models', () => {
     const proxiedInstance = Injector.proxyInstance(key);
     expect(util.types.isProxy(proxiedInstance)).toBe(true);
   });
-  it('should resolve various proxied dependencies ', () => {});
+  it.only('should resolve various proxied dependencies', () => {
+    const address = new Address();
+    const client = new Client();
+    const product = new Product();
+    const stock = new Stock();
+    const addressKey = Injector.setDependency(address);
+    const clientKey = Injector.setDependency(client);
+    const productKey = Injector.setDependency(product);
+    const stockKey = Injector.setDependency(stock);
+    const proxiedAddress = Injector.proxyInstance(addressKey);
+    const proxiedClient = Injector.proxyInstance(clientKey);
+    const proxiedProduct = Injector.proxyInstance(productKey);
+    const proxiedStock = Injector.proxyInstance(stockKey);
+    const p = [proxiedAddress, proxiedClient, proxiedProduct, proxiedStock];
+    p.forEach(item => expect(util.types.isProxy(item)).toBe(true));
+  });
 });
