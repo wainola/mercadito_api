@@ -4,7 +4,8 @@
   "description": "Api for Mercadito de Larmahue",
   "main": "server.js",
   "scripts": {
-    "test": "jest src --watchAll",
+    "test": "jest src/__tests__/ --watchAll",
+    "test:e2e": "jest e2e --watchAll",
     "dev": "nodemon ./src/server.js"
   },
   "repository": {

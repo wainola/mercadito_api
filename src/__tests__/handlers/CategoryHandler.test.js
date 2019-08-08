@@ -1,5 +1,6 @@
 const CategoryHandler = require('../../handlers/CategoryHandler');
 const QueryBuilderProxy = require('../../services/QueryBuilderProxy');
+const Response = require('../../testsUtils/Response');
 
 class FakeCategoryModel {
   constructor() {
@@ -43,24 +44,6 @@ function ProxyHandler(target) {
     }
   };
   return new Proxy(target, internalHandler);
-}
-
-class Response {
-  constructor() {
-    this.statusCode = null;
-  }
-
-  status(code) {
-    this.statusCode = code;
-    return this;
-  }
-
-  send(obj) {
-    return {
-      statusCode: this.statusCode,
-      body: obj
-    };
-  }
 }
 
 describe('CategoryHandler unit test', () => {

@@ -3,7 +3,8 @@ const Joi = require('joi');
 module.exports = {
   postSchema: Joi.object().keys({
     category: Joi.object().keys({
-      category_name: Joi.string().required()
+      category_name: Joi.string().required(),
+      createdat: Joi.string().required()
     })
   }),
   updateSchema: Joi.object().keys({

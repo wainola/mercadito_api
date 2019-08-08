@@ -30,6 +30,7 @@ class CategoryHandler extends Base {
       category: { id }
     } = body;
     const categoryDeleted = await this.categoryModel.deleteCategory(id);
+    console.log('cat deleted', categoryDeleted);
     return response.status(200).send({ data: categoryDeleted });
   }
 

@@ -93,10 +93,11 @@ QueryBuilderProxy.prototype.setInternalHandler = function setupInternalHandler()
             return target[propName](getQuery);
           case 'delete':
             getQuery = generateQuery.call(self, [calledMethod, args, instancesName]);
-            return getQuery;
+            // console.log('getQuery:', getQuery);
+            return target[propName](getQuery);
           case 'get':
             getQuery = generateQuery.call(self, [calledMethod, args, instancesName]);
-            return getQuery;
+            return target[propName](getQuery);
           default:
             return null;
         }
@@ -291,6 +292,7 @@ QueryBuilderProxy.prototype.generateQuery = function resolveQuery([
       return query;
     case 'delete':
       query = `DELETE FROM ${tableName} WHERE id = '${id}';`;
+      // console.log('QUERY', query);
       return query;
     case 'get':
       const selectColumnsSentences = this.generateColumnsSentences(data);
@@ -326,7 +328,7 @@ QueryBuilderProxy.prototype.buildAttributesQuery = function resolveAttributesStr
   attributes,
   keysOfDataPassed
 ) {
-  console.log('attrs and keys::', attributes, keysOfDataPassed);
+  // console.log('attrs and keys::', attributes, keysOfDataPassed);
   const attributesFiltered = attributes.reduce((acc, item) => {
     const index = keysOfDataPassed.indexOf(item);
     const elem = keysOfDataPassed[index];
