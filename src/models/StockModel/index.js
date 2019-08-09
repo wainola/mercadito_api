@@ -11,6 +11,11 @@ class Stock extends Database {
     return this.execQuery(queryToSend);
   }
 
+  async updateStock(quantity, id) {
+    const queryToSend = quantity;
+    return this.execQuery(queryToSend);
+  }
+
   async getStock(params, id) {
     const queryToSend = params;
     return this.execQuery(queryToSend);
