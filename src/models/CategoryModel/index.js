@@ -44,6 +44,4 @@ class Category extends Database {
   }
 }
 
-const CategoryDefault = Category;
-
 module.exports = Category;

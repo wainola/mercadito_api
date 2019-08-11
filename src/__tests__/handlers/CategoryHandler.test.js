@@ -34,11 +34,9 @@ const queryB = new QueryBuilderProxy([fkc]);
 const fkcProxied = queryB.setProxy(fkc);
 
 function ProxyHandler(target) {
-  console.log('proxiedHandler');
   const internalHandler = {
     construct(Target, args) {
       const instance = new Target(...args);
-      console.log('instance::::', instance);
       instance.categoryModel = fkcProxied;
       return instance;
     }
