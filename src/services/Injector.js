@@ -10,15 +10,26 @@ Injector.prototype.getDependencies = function resolveDependecies() {
 };
 
 Injector.prototype.setDependency = function setupDepencencie(dependency) {
-  const {
-    constructor: { name: instanceName }
-  } = Reflect.getPrototypeOf(dependency);
+  if (!Array.isArray(dependency)) {
+    const instanceName = this.getInstanceName(dependency);
 
-  this.dependencies = {
-    ...this.dependencies,
-    [instanceName.toLowerCase()]: dependency
-  };
-  return instanceName.toLowerCase();
+    this.dependencies = {
+      ...this.dependencies,
+      [instanceName]: dependency
+    };
+    return instanceName;
+  }
+
+  const instancesNames = dependency.map(item => {
+    const iName = this.getInstanceName(item);
+    this.dependencies = {
+      ...this.dependencies,
+      [iName]: item
+    };
+    return { instanceName: iName };
+  });
+
+  return instancesNames;
 };
 
 Injector.prototype.proxyInstance = function resolveProxiedInstance(key) {
@@ -33,6 +44,13 @@ Injector.prototype.proxyInstance = function resolveProxiedInstance(key) {
   } catch (error) {
     return error;
   }
+};
+
+Injector.prototype.getInstanceName = function resolveInstanceName(dependency) {
+  const {
+    constructor: { name: instanceName }
+  } = Reflect.getPrototypeOf(dependency);
+  return instanceName.toLowerCase();
 };
 
 module.exports = new Injector();

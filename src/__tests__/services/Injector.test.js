@@ -1,5 +1,5 @@
-const Injector = require('../../services/Injector');
 const util = require('util');
+const Injector = require('../../services/Injector');
 
 const Address = require('./MockedModels/AddressModel');
 const Client = require('./MockedModels/ClientModel');
@@ -25,10 +25,13 @@ describe('Injector => dependency injection of proxied models', () => {
           .add('bar')
           .add('baz');
       }
+
       insertData(p) {
         return p;
       }
+
       updateData() {}
+
       deleteData() {}
     }
     const i1 = new I1();
@@ -45,6 +48,26 @@ describe('Injector => dependency injection of proxied models', () => {
     const clientKey = Injector.setDependency(client);
     const productKey = Injector.setDependency(product);
     const stockKey = Injector.setDependency(stock);
+    const proxiedAddress = Injector.proxyInstance(addressKey);
+    const proxiedClient = Injector.proxyInstance(clientKey);
+    const proxiedProduct = Injector.proxyInstance(productKey);
+    const proxiedStock = Injector.proxyInstance(stockKey);
+    const p = [proxiedAddress, proxiedClient, proxiedProduct, proxiedStock];
+    p.forEach(item => expect(util.types.isProxy(item)).toBe(true));
+  });
+  it('should resolve an array of dependencies', () => {
+    const address = new Address();
+    const client = new Client();
+    const product = new Product();
+    const stock = new Stock();
+    const dependencies = [address, client, product, stock];
+    const injectedDependencies = Injector.setDependency(dependencies);
+    const [
+      { instanceName: addressKey },
+      { instanceName: clientKey },
+      { instanceName: productKey },
+      { instanceName: stockKey }
+    ] = injectedDependencies;
     const proxiedAddress = Injector.proxyInstance(addressKey);
     const proxiedClient = Injector.proxyInstance(clientKey);
     const proxiedProduct = Injector.proxyInstance(productKey);
