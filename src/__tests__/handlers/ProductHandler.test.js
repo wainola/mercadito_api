@@ -205,10 +205,15 @@ describe('ProductHandler', () => {
     expect(statusCode).toBe(200);
     expect(typeof data).toBe('object');
   });
-  it.only('should return 200 when we passed the body to update a product', async () => {
+  it('should return 200 when we passed the body to update a product', async () => {
     const r = await productHandler.updateProduct(updateProductBody, res);
-    console.log('r:::', r);
+    const {
+      statusCode,
+      body: { data }
+    } = r;
+    expect(statusCode).toBe(200);
+    expect(typeof data).toBe('string');
   });
-  it('should return 200 when we passed the body to delete a product', async () => {});
+  it.only('should return 200 when we passed the body to delete a product', async () => {});
   it('should return 200 when we passed the body to get a product', async () => {});
 });

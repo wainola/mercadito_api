@@ -31,8 +31,12 @@ class ProductHandler extends Base {
   async updateProduct({ body }, response) {
     const { product } = body;
     const { id } = product;
-    const dataToUpdate = Object.keys(product).filter(item => item !== 'id');
-    console.log('d:::', dataToUpdate);
+    const dataToUpdate = Object.keys(product)
+      .filter(item => item !== 'id')
+      .reduce((acc, item) => {
+        acc[item] = product[item];
+        return acc;
+      }, {});
     const productUpdation = await this.productModel.updateProduct(dataToUpdate, id);
     return response.status(200).send({ data: productUpdation });
   }
