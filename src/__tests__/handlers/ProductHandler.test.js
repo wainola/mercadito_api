@@ -68,6 +68,7 @@ class FakeStockModel {
   }
 
   async insertStock(quantity) {
+    console.log('insertedStock', quantity);
     return quantity;
   }
 
@@ -88,6 +89,8 @@ const queryBuilder = new QueryBuilderProxy([fakeProductModel, fakeCategoryModel,
 const fakeProxiedProductModel = queryBuilder.setProxy(fakeProductModel);
 const fakeProxiedCategoryModel = queryBuilder.setProxy(fakeCategoryModel);
 const fakeProxiedStockModel = queryBuilder.setProxy(fakeStockModel);
+
+// // fakeProxiedStockModel.insertStock({ quantity: '23' }).then(d => console.log('faked::::', d));
 
 function ProxyConstructor(target) {
   const internalHandler = {
@@ -192,4 +195,18 @@ describe('ProductHandler', () => {
     await productHandler.getProduct(getProductBody, res);
     expect(getProductSpy).toHaveBeenCalled();
   });
+  it.only('should return 200 when we passed the body to post a product', async () => {
+    const r = await productHandler.postProduct(postProductBody, res);
+    const {
+      statusCode,
+      body: { data }
+    } = r;
+    expect(statusCode).toBe(200);
+    expect(typeof data).toBe('string');
+  });
+  it('should return 200 when we passed the body to update a product', async () => {
+    const r = await productHandler.updateProduct(updateProductBody, res);
+  });
+  it('should return 200 when we passed the body to delete a product', async () => {});
+  it('should return 200 when we passed the body to get a product', async () => {});
 });

@@ -22,9 +22,12 @@ class ProductHandler extends Base {
   }
 
   async postProduct({ body }, response) {
-    const { product } = body;
-    const productInserted = await this.productModel.insertProduct(product);
-    return productInserted;
+    const { product, category, stock } = body;
+    const rs = await this.stockModel.insertStock(stock);
+    console.log('RES::', rs);
+    return '';
+    // const productInserted = await this.productModel.insertProduct(product);
+    // return response.status(200).send({ data: productInserted });
   }
 
   async updateProduct({ body }, response) {}

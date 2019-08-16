@@ -61,7 +61,7 @@ QueryBuilderProxy.prototype.setInternalHandler = function setupInternalHandler()
           return;
         }
         const [calledMethod] = queryDictionary.filter(item => item.methodOriginalName === propName);
-
+        console.log('calledMethod', queryDictionary);
         const { action } = calledMethod;
 
         const instancesName = instancesAndMethods
@@ -198,11 +198,17 @@ QueryBuilderProxy.prototype.getInstancesAndMethods = function resolveInstancesAn
  * The expected query action order is: [insert, update, delete, get]
  */
 QueryBuilderProxy.prototype.setQueryActions = function setupQueryActions(instancesNameAndMethods) {
-  const methods = instancesNameAndMethods.map(item => item.methods)[0];
+  // TODO => RESOLVE FOR VARIOUS INSTANCES (ARRAY OF INSTANCES)
+  if (!instancesNameAndMethods.length > 1) {
+    const methods = instancesNameAndMethods.map(item => item.methods)[0];
+    const prefixedMethods = this.getPrefixedOnMethods(methods);
+    // console.log('getPrefixedMethods', prefixedMethods);
+    const sortedQueryActions = this.sortMethodsNames(prefixedMethods);
+    return sortedQueryActions;
+  }
+
+  const methods = instancesNameAndMethods.map(item => item.methods);
   const prefixedMethods = this.getPrefixedOnMethods(methods);
-  // console.log('getPrefixedMethods', prefixedMethods);
-  const sortedQueryActions = this.sortMethodsNames(prefixedMethods);
-  return sortedQueryActions;
 };
 
 /**
@@ -225,28 +231,30 @@ QueryBuilderProxy.prototype.sortMethodsNames = function resolveSortedMethods(met
  */
 QueryBuilderProxy.prototype.getPrefixedOnMethods = function resolvePrefixOnMethodNames(methods) {
   const queryMapping = ['insert', 'update', 'delete', 'get'];
-  // console.log('methods', methods);
-  return methods.reduce((acc, item) => {
-    let r;
-    if (item.includes('insert')) {
-      r = queryMapping.indexOf('insert');
-      acc.push({ action: queryMapping[r], whereClause: false, methodOriginalName: item });
-    }
-    if (item.includes('update')) {
-      r = queryMapping.indexOf('update');
-      acc.push({ action: queryMapping[r], whereClause: true, methodOriginalName: item });
-    }
-    if (item.includes('delete')) {
-      r = queryMapping.indexOf('delete');
-      acc.push({ action: queryMapping[r], whereClause: true, methodOriginalName: item });
-    }
-    if (item.includes('get')) {
-      r = queryMapping.indexOf('get');
-      acc.push({ action: queryMapping[r], whereClause: true, methodOriginalName: item });
-    }
-
-    return acc;
-  }, []);
+  console.log('methods:::::::', methods.length);
+  if(!methods.length > 1){
+    return methods.reduce((acc, item) => {
+      let r;
+      if (item.includes('insert')) {
+        r = queryMapping.indexOf('insert');
+        acc.push({ action: queryMapping[r], whereClause: false, methodOriginalName: item });
+      }
+      if (item.includes('update')) {
+        r = queryMapping.indexOf('update');
+        acc.push({ action: queryMapping[r], whereClause: true, methodOriginalName: item });
+      }
+      if (item.includes('delete')) {
+        r = queryMapping.indexOf('delete');
+        acc.push({ action: queryMapping[r], whereClause: true, methodOriginalName: item });
+      }
+      if (item.includes('get')) {
+        r = queryMapping.indexOf('get');
+        acc.push({ action: queryMapping[r], whereClause: true, methodOriginalName: item });
+      }
+  
+      return acc;
+    }, []);
+  }
 };
 
 /**
