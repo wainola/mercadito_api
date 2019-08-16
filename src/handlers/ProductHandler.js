@@ -22,15 +22,20 @@ class ProductHandler extends Base {
   }
 
   async postProduct({ body }, response) {
-    const { product, category, stock } = body;
-    const rs = await this.stockModel.insertStock(stock);
-    console.log('RES::', rs);
-    return '';
-    // const productInserted = await this.productModel.insertProduct(product);
-    // return response.status(200).send({ data: productInserted });
+    const { product, stock } = body;
+    const stockUpdation = await this.stockModel.updateStock({ quantity: stock.quantity }, stock.id);
+    const productInsertion = await this.productModel.insertProduct(product);
+    return response.status(200).send({ data: [stockUpdation, productInsertion] });
   }
 
-  async updateProduct({ body }, response) {}
+  async updateProduct({ body }, response) {
+    const { product } = body;
+    const { id } = product;
+    const dataToUpdate = Object.keys(product).filter(item => item !== 'id');
+    console.log('d:::', dataToUpdate);
+    const productUpdation = await this.productModel.updateProduct(dataToUpdate, id);
+    return response.status(200).send({ data: productUpdation });
+  }
 
   async deleteProduct({ body }, response) {}
 
