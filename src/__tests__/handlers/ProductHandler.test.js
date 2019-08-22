@@ -82,11 +82,10 @@ class FakeStockModel {
 const fakeProductModel = new FakeProductModel();
 const fakeCategoryModel = new FakeCategoryModel();
 const fakeStockModel = new FakeStockModel();
-MetaApeiron.setDependencies([fakeProductModel, fakeCategoryModel, fakeStockModel]);
 
-const fakeProxiedProductModel = MetaApeiron.proxyInstance('FakeProductModel');
-const fakeProxiedCategoryModel = MetaApeiron.proxyInstance('FakeCategoryModel');
-const fakeProxiedStockModel = MetaApeiron.proxyInstance('FakeStockModel');
+const fakeProxiedProductModel = MetaApeiron.setDependency(fakeProductModel).proxyInstance();
+const fakeProxiedCategoryModel = MetaApeiron.setDependency(fakeCategoryModel).proxyInstance();
+const fakeProxiedStockModel = MetaApeiron.setDependency(fakeStockModel).proxyInstance();
 
 function ProxyConstructor(target) {
   const internalHandler = {
@@ -170,9 +169,9 @@ describe('ProductHandler', () => {
       }
     };
   });
-  it.only('should have three proxy instances of the models that are hold internally by the class', () => {
+  it('should have three proxy instances of the models that are hold internally by the class', () => {
     const { productModel, categoryModel, stockModel } = productHandler;
-    console.log(productHandler);
+    // console.log(productHandler);
     expect(util.types.isProxy(productModel)).toBe(true);
     expect(util.types.isProxy(categoryModel)).toBe(true);
     expect(util.types.isProxy(stockModel)).toBe(true);
