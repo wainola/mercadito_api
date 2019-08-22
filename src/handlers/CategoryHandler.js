@@ -1,18 +1,15 @@
 const MetaApeiron = require('meta-apeiron');
-const Base = require('./BaseHandler');
 const CategoryModel = require('../models/CategoryModel');
 
-class CategoryHandler extends Base {
+class CategoryHandler {
   constructor(client = null) {
-    super();
-    this.categoryKey = Injector.setDependency(new CategoryModel(client));
-    this.categoryModel = Injector.proxyInstance(this.categoryKey);
+    this.categoryModel = MetaApeiron.setDependency(new CategoryModel(client)).proxyInstance();
     this.postCategory = this.postCategory.bind(this);
   }
 
   async postCategory({ body }, response) {
     const { category } = body;
-    const categoryInserted = await this.categoryModel.insertCategory(category);
+    const categoryInserted = await this.categoryModel.insert(category);
     return response.status(200).send({ data: categoryInserted });
   }
 
@@ -21,7 +18,7 @@ class CategoryHandler extends Base {
       category: { id, category_name }
     } = body;
     const updatedCategory = { category_name };
-    const categoryUpdated = await this.categoryModel.updateCategory(updatedCategory, id);
+    const categoryUpdated = await this.categoryModel.update(updatedCategory, id);
     return response.status(200).send({ data: categoryUpdated });
   }
 
@@ -29,7 +26,7 @@ class CategoryHandler extends Base {
     const {
       category: { id }
     } = body;
-    const categoryDeleted = await this.categoryModel.deleteCategory(id);
+    const categoryDeleted = await this.categoryModel.delete(id);
     return response.status(200).send({ data: categoryDeleted });
   }
 
@@ -37,7 +34,7 @@ class CategoryHandler extends Base {
     const {
       category: { params, id }
     } = body;
-    const categories = await this.categoryModel.getCategory(params, id);
+    const categories = await this.categoryModel.get(params, id);
     return response.status(200).send({ data: categories });
   }
 }

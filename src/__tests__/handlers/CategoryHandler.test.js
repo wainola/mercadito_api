@@ -1,5 +1,5 @@
+const MetaApeiron = require('meta-apeiron');
 const CategoryHandler = require('../../handlers/CategoryHandler');
-const QueryBuilderProxy = require('../../services/QueryBuilderProxy');
 const Response = require('../../testsUtils/Response');
 
 class FakeCategoryModel {
@@ -12,26 +12,25 @@ class FakeCategoryModel {
       .add('deletedat');
   }
 
-  async insertCategory(param) {
+  async insert(param) {
     return param;
   }
 
-  async updateCategory(param, id) {
+  async update(param, id) {
     return param;
   }
 
-  async deleteCategory(id) {
-    return param;
+  async delete(id) {
+    return id;
   }
 
-  async getCategory(param, id) {
+  async get(param, id) {
     return param;
   }
 }
 
 const fkc = new FakeCategoryModel();
-const queryB = new QueryBuilderProxy([fkc]);
-const fkcProxied = queryB.setProxy(fkc);
+const fkcProxied = MetaApeiron.setDependency(fkc).proxyInstance();
 
 function ProxyHandler(target) {
   const internalHandler = {
