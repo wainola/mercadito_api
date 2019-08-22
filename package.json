@@ -4,7 +4,7 @@
   "description": "Api for Mercadito de Larmahue",
   "main": "server.js",
   "scripts": {
-    "test": "jest src/__tests__/ --watchAll",
+    "test:debug": "jest src/__tests__/ --watchAll",
     "test:e2e": "jest e2e --watchAll",
     "dev": "nodemon ./src/server.js"
   },
@@ -22,15 +22,15 @@
     "url": "null"
   },
   "devDependencies": {
-    "@types/jest": "^24.0.15",
+    "@types/jest": "^24.0.18",
     "eslint": "^5.3.0",
     "eslint-config-airbnb": "^17.1.0",
     "eslint-config-prettier": "^4.0.0",
     "eslint-plugin-import": "^2.16.0",
     "eslint-plugin-jsx-a11y": "^6.2.1",
     "eslint-plugin-prettier": "^3.0.1",
-    "eslint-plugin-react": "^7.12.4",
-    "jest": "^24.8.0",
+    "eslint-plugin-react": "^7.14.3",
+    "jest": "^24.9.0",
     "node-fetch": "^2.6.0",
     "nodemon": "^1.19.1",
     "prettier": "^1.16.4"
@@ -38,11 +38,12 @@
   "dependencies": {
     "body-parser": "^1.19.0",
     "cors": "^2.8.5",
-    "dotenv": "^8.0.0",
+    "dotenv": "^8.1.0",
     "express": "^4.17.1",
     "joi": "^14.3.1",
+    "meta-apeiron": "^1.0.3",
     "moment": "^2.24.0",
     "moment-timezone": "^0.5.26",
-    "pg": "^7.11.0"
+    "pg": "^7.12.1"
   }
 }

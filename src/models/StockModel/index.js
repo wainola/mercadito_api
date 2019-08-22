@@ -6,17 +6,17 @@ class Stock extends Database {
     this.attributes = new Set().add('id').add('stock_quantity');
   }
 
-  async insertStock(quantity) {
+  async insert(quantity) {
     const queryToSend = quantity;
     return this.execQuery(queryToSend);
   }
 
-  async updateStock(quantity, id) {
+  async update(quantity, id) {
     const queryToSend = quantity;
     return this.execQuery(queryToSend);
   }
 
-  async getStock(params, id) {
+  async get(params, id) {
     const queryToSend = params;
     return this.execQuery(queryToSend);
   }

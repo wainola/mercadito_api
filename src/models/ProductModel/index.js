@@ -20,22 +20,22 @@ class Product extends Database {
    * Product insertion need the fk for the category and the id of the stock
    * to enable the table relationship.
    */
-  async insertProduct(params) {
+  async insert(params) {
     const queryToSend = params;
     return this.execQuery(queryToSend);
   }
 
-  async updateProduct(params, id) {
+  async update(params, id) {
     const queryToSend = params;
     return this.execQuery(queryToSend);
   }
 
-  async deleteProduct(id) {
+  async delete(id) {
     const queryToSend = id;
     return this.execQuery(queryToSend);
   }
 
-  async getProduct(params, id) {
+  async get(params, id) {
     const queryToSend = params;
     return this.execQuery(queryToSend);
   }

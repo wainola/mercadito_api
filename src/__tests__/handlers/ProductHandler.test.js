@@ -1,7 +1,6 @@
 const util = require('util');
+const MetaApeiron = require('meta-apeiron')
 const ProductHandler = require('../../handlers/ProductHandler');
-const QueryBuilderProxy = require('../../services/QueryBuilderProxy');
-const Injector = require('../../services/Injector');
 const Response = require('../../testsUtils/Response');
 
 class FakeProductModel {

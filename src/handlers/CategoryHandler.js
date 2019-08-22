@@ -1,6 +1,6 @@
+const MetaApeiron = require('meta-apeiron');
 const Base = require('./BaseHandler');
 const CategoryModel = require('../models/CategoryModel');
-const Injector = require('../services/Injector');
 
 class CategoryHandler extends Base {
   constructor(client = null) {
