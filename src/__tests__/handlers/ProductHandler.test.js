@@ -1,5 +1,5 @@
 const util = require('util');
-const MetaApeiron = require('meta-apeiron')
+const MetaApeiron = require('meta-apeiron');
 const ProductHandler = require('../../handlers/ProductHandler');
 const Response = require('../../testsUtils/Response');
 
@@ -17,19 +17,19 @@ class FakeProductModel {
       .add('deletedat');
   }
 
-  async insertProduct(param) {
+  async insert(param) {
     return param;
   }
 
-  async updateProduct(param, id) {
+  async update(param, id) {
     return param;
   }
 
-  async deleteProduct(id) {
+  async delete(id) {
     return param;
   }
 
-  async getProduct(param, id) {
+  async get(param, id) {
     return param;
   }
 }
@@ -44,19 +44,19 @@ class FakeCategoryModel {
       .add('deletedat');
   }
 
-  async insertCategory(param) {
+  async insert(param) {
     return param;
   }
 
-  async updateCategory(param, id) {
+  async update(param, id) {
     return param;
   }
 
-  async deleteCategory(id) {
+  async delete(id) {
     return id;
   }
 
-  async getCategory(param, id) {
+  async get(param, id) {
     return param;
   }
 }
@@ -66,16 +66,15 @@ class FakeStockModel {
     this.attributes = new Set().add('id').add('stock_quantity');
   }
 
-  async insertStock(quantity) {
-    console.log('insertedStock', quantity);
+  async insert(quantity) {
     return quantity;
   }
 
-  async updateStock(quantity, id) {
+  async update(quantity, id) {
     return quantity;
   }
 
-  async getStock(params, id) {
+  async get(params, id) {
     return params;
   }
 }
@@ -83,13 +82,11 @@ class FakeStockModel {
 const fakeProductModel = new FakeProductModel();
 const fakeCategoryModel = new FakeCategoryModel();
 const fakeStockModel = new FakeStockModel();
-const queryBuilder = new QueryBuilderProxy([fakeProductModel, fakeCategoryModel, fakeStockModel]);
+MetaApeiron.setDependencies([fakeProductModel, fakeCategoryModel, fakeStockModel]);
 
-const fakeProxiedProductModel = queryBuilder.setProxy(fakeProductModel);
-const fakeProxiedCategoryModel = queryBuilder.setProxy(fakeCategoryModel);
-const fakeProxiedStockModel = queryBuilder.setProxy(fakeStockModel);
-
-// // fakeProxiedStockModel.insertStock({ quantity: '23' }).then(d => console.log('faked::::', d));
+const fakeProxiedProductModel = MetaApeiron.proxyInstance('FakeProductModel');
+const fakeProxiedCategoryModel = MetaApeiron.proxyInstance('FakeCategoryModel');
+const fakeProxiedStockModel = MetaApeiron.proxyInstance('FakeStockModel');
 
 function ProxyConstructor(target) {
   const internalHandler = {
@@ -173,8 +170,9 @@ describe('ProductHandler', () => {
       }
     };
   });
-  it('should have three proxy instances of the models that are hold internally by the class', () => {
+  it.only('should have three proxy instances of the models that are hold internally by the class', () => {
     const { productModel, categoryModel, stockModel } = productHandler;
+    console.log(productHandler);
     expect(util.types.isProxy(productModel)).toBe(true);
     expect(util.types.isProxy(categoryModel)).toBe(true);
     expect(util.types.isProxy(stockModel)).toBe(true);
@@ -213,6 +211,6 @@ describe('ProductHandler', () => {
     expect(statusCode).toBe(200);
     expect(typeof data).toBe('string');
   });
-  it.only('should return 200 when we passed the body to delete a product', async () => {});
+  it('should return 200 when we passed the body to delete a product', async () => {});
   it('should return 200 when we passed the body to get a product', async () => {});
 });

@@ -1,30 +1,19 @@
 const MetaApeiron = require('meta-apeiron');
-const Base = require('./BaseHandler');
 const ProductModel = require('../models/ProductModel');
 const CategoryModel = require('../models/CategoryModel');
 const StockModel = require('../models/StockModel');
 
-class ProductHandler extends Base {
+class ProductHandler {
   constructor(client = null) {
-    super();
-    const [
-      { instanceName: productKey },
-      { instanceName: categoryKey },
-      { instanceName: stockKey }
-    ] = Injector.setDependency([
-      new ProductModel(client),
-      new CategoryModel(client),
-      new StockModel(client)
-    ]);
-    this.productModel = Injector.proxyInstance(productKey);
-    this.categoryModel = Injector.proxyInstance(categoryKey);
-    this.stockModel = Injector.proxyInstance(stockKey);
+    this.productModel = MetaApeiron.setDependency(new ProductModel(client)).proxyInstance();
+    this.categoryModel = MetaApeiron.setDependency(new CategoryModel(client)).proxyInstance();
+    this.stockModel = MetaApeiron.setDependency(new StockModel(client)).proxyInstance();
   }
 
   async postProduct({ body }, response) {
     const { product, stock } = body;
-    const stockUpdation = await this.stockModel.updateStock({ quantity: stock.quantity }, stock.id);
-    const productInsertion = await this.productModel.insertProduct(product);
+    const stockUpdation = await this.stockModel.update({ quantity: stock.quantity }, stock.id);
+    const productInsertion = await this.productModel.insert(product);
     return response.status(200).send({ data: [stockUpdation, productInsertion] });
   }
 
@@ -37,7 +26,7 @@ class ProductHandler extends Base {
         acc[item] = product[item];
         return acc;
       }, {});
-    const productUpdation = await this.productModel.updateProduct(dataToUpdate, id);
+    const productUpdation = await this.productModel.update(dataToUpdate, id);
     return response.status(200).send({ data: productUpdation });
   }
 
