@@ -143,8 +143,6 @@ describe('ProductHandler', () => {
       }
     };
 
-    // productHandler.postProduct(postProductBody).then(d => console.log('POST PRODUCT RESULT:', d));
-
     updateProductBody = {
       body: {
         product: {
