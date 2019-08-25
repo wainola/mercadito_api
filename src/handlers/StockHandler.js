@@ -8,25 +8,25 @@ class StockHandler {
 
   async postStockQuantity({ body }, response) {
     const {
-      stock: { quantity }
+      stock: { stock_quantity }
     } = body;
-    const stockInserted = await this.stockModel.insert(quantity);
+    const stockInserted = await this.stockModel.insert({ stock_quantity });
     return response.status(200).send({ data: stockInserted });
   }
 
   async updateStock({ body }, response) {
     const {
-      stock: { quantity, id }
+      stock: { stock_quantity, id }
     } = body;
-    const stockUpdated = await this.stockModel.update(quantity, id);
+    const stockUpdated = await this.stockModel.update({ stock_quantity }, id);
     return response.status(200).send({ data: stockUpdated });
   }
 
   async getStock({ body }, response) {
     const {
-      stock: { quantity, id }
+      stock: { params, id }
     } = body;
-    const selectedStock = await this.stockModel.get(quantity, id);
+    const selectedStock = await this.stockModel.get(params, id);
     return response.status(200).send({ data: selectedStock });
   }
 }
