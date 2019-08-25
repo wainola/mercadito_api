@@ -30,3 +30,5 @@ class StockHandler {
     return response.status(200).send({ data: selectedStock });
   }
 }
+
+module.exports = StockHandler;
