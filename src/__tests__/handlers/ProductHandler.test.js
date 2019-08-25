@@ -26,7 +26,7 @@ class FakeProductModel {
   }
 
   async delete(id) {
-    return param;
+    return id;
   }
 
   async get(param, id) {
@@ -165,7 +165,8 @@ describe('ProductHandler', () => {
 
     getProductBody = {
       body: {
-        product: ['product_name', 'product_price', 'product_description']
+        product: ['product_name', 'product_price', 'product_description'],
+        id: 'someId'
       }
     };
   });
@@ -210,6 +211,22 @@ describe('ProductHandler', () => {
     expect(statusCode).toBe(200);
     expect(typeof data).toBe('string');
   });
-  it('should return 200 when we passed the body to delete a product', async () => {});
-  it('should return 200 when we passed the body to get a product', async () => {});
+  it('should return 200 when we passed the body to delete a product', async () => {
+    const r = await productHandler.deleteProduct(deleteProductBody, res);
+    const {
+      statusCode,
+      body: { data }
+    } = r;
+    expect(statusCode).toBe(200);
+    expect(typeof data).toBe('string');
+  });
+  it('should return 200 when we passed the body to get a product', async () => {
+    const r = await productHandler.getProduct(getProductBody, res);
+    const {
+      statusCode,
+      body: { data }
+    } = r;
+    expect(statusCode).toBe(200);
+    expect(typeof data).toBe('string');
+  });
 });

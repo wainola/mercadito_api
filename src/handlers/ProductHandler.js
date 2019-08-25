@@ -30,9 +30,19 @@ class ProductHandler {
     return response.status(200).send({ data: productUpdation });
   }
 
-  async deleteProduct({ body }, response) {}
+  async deleteProduct({ body }, response) {
+    const {
+      product: { id }
+    } = body;
+    const productDeletion = await this.productModel.delete(id);
+    return response.status(200).send({ data: productDeletion });
+  }
 
-  async getProduct({ body }, response) {}
+  async getProduct({ body }, response) {
+    const { product, id } = body;
+    const productSelection = await this.productModel.get(product, id);
+    return response.status(200).send({ data: productSelection });
+  }
 }
 
 module.exports = ProductHandler;
