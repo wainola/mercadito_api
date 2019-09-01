@@ -1,0 +1,11 @@
+// UP
+const up = `CREATE TABLE ADDRESS (
+  ID UUID NOT NULL PRIMARY KEY DEFAULT GEN_RANDOM_UUID(),
+  LAT TEXT NOT NULL,
+  LONG TEXT NOT NULL
+);`;
+
+// DOWN
+const down = `DROP TABLE ADDRESS;`;
+
+module.exports = { up, down };
